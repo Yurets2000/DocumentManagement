@@ -1,0 +1,163 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3B6E8B0A-8646-4311-821F-55AF8CC14C22}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>DocumentManagement</RootNamespace>
+    <AssemblyName>DocumentManagement</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Chancery.cs" />
+    <Compile Include="ChanceryInfoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Company.cs" />
+    <Compile Include="CompanyForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CompanyFormValidator.cs" />
+    <Compile Include="CompanyInfoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CompanyType.cs" />
+    <Compile Include="DictionaryCompanyDAO.cs" />
+    <Compile Include="DictionaryPersonDAO.cs" />
+    <Compile Include="Director.cs" />
+    <Compile Include="DirectorInfoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Document.cs" />
+    <Compile Include="DocumentForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DocumentInfoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DocumentManagementForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DocumentManagementForm.Designer.cs">
+      <DependentUpon>DocumentManagementForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DocumentType.cs" />
+    <Compile Include="Employee.cs" />
+    <Compile Include="EmployeeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EmployeeFormValidator.cs" />
+    <Compile Include="Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ICompanyDAO.cs" />
+    <Compile Include="IdGenerator.cs" />
+    <Compile Include="IPersonDAO.cs" />
+    <Compile Include="MainSecretary.cs" />
+    <Compile Include="Marker.cs" />
+    <Compile Include="Person.cs" />
+    <Compile Include="PersonForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PersonFormValidator.cs" />
+    <Compile Include="PersonInfoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Secretary.cs" />
+    <Compile Include="SecretaryInfoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SqlArchiveDAO.cs" />
+    <Compile Include="SqlChanceryDAO.cs" />
+    <Compile Include="SqlCompanyDAO.cs" />
+    <Compile Include="SqlCompanyTypeDAO.cs" />
+    <Compile Include="SqlDirectorDAO.cs" />
+    <Compile Include="SqlDocumentDAO.cs" />
+    <Compile Include="SqlDocumentTypeDAO.cs" />
+    <Compile Include="SqlMainSecretaryDAO.cs" />
+    <Compile Include="SqlMarkerDAO.cs" />
+    <Compile Include="SqlPendingDocumentsDAO.cs" />
+    <Compile Include="SqlPersonDAO.cs" />
+    <Compile Include="SqlSecretaryDAO.cs" />
+    <Compile Include="SqlSecretaryPendingDocumentsDAO.cs" />
+    <Compile Include="Utils.cs" />
+    <EmbeddedResource Include="DocumentManagementForm.resx">
+      <DependentUpon>DocumentManagementForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="ClassDiagram1.cd" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\update.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\search.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
