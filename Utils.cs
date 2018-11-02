@@ -40,5 +40,11 @@ namespace DocumentManagement
             }
             return true;
         }
+
+        public static byte[] ImageToByte(Image img)
+        {
+            ImageConverter converter = new ImageConverter();
+            return (byte[])converter.ConvertTo(img, typeof(byte[]));
+        }
     }
 }

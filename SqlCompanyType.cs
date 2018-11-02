@@ -9,14 +9,14 @@ using System.Data;
 
 namespace DocumentManagement
 {
-    public class SqlCompanyTypeDAO
+    public class SqlCompanyType
     {
         private static string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
         public static List<CompanyType> GetAllCompanyTypes()
         {
             List<CompanyType> companyTypes = new List<CompanyType>();
-            string sqlExpression = "SELECT * FROM CompanyType";
+            string sqlExpression = "SELECT * FROM CompanyType WHERE Deleted = 0";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -42,7 +42,7 @@ namespace DocumentManagement
         public static CompanyType GetCompanyType(int id)
         {
             CompanyType companyType = null;
-            string sqlExpression = "SELECT * FROM CompanyType WHERE Id = @id";
+            string sqlExpression = "SELECT * FROM CompanyType WHERE Id = @id AND Deleted = 0";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();

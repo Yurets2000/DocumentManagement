@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 namespace DocumentManagement
 {
@@ -71,29 +72,6 @@ namespace DocumentManagement
             };
             text.SetBounds(10, 230, 80, 30);
 
-            Button editButton = new Button
-            {
-                Name = "editButton",
-                Text = "Редактировать",
-                BackColor = Color.Tomato,
-                Font = new Font("Monotype Corsiva", 14.25F, FontStyle.Italic, GraphicsUnit.Point, ((byte)(204)))
-            };
-            editButton.SetBounds(10, 340, 235, 30);
-            editButton.Click += new EventHandler(EditEvent);
-
-            Controls.Add(title);
-            Controls.Add(type);
-            Controls.Add(documentCode);
-            Controls.Add(receiver);
-            Controls.Add(sender);
-            Controls.Add(time);
-            Controls.Add(text);
-            Controls.Add(editButton);
-            AddInfoForms();
-        }
-
-        private void AddInfoForms()
-        {
             Label titleInfo = new Label
             {
                 Name = "titleInfo",
@@ -104,7 +82,7 @@ namespace DocumentManagement
             Label typeInfo = new Label
             {
                 Name = "typeInfo",
-                Text = document.Type.type
+                Text = document.Type.ToString()
             };
             typeInfo.SetBounds(95, 55, 150, 30);
 
@@ -143,6 +121,13 @@ namespace DocumentManagement
             };
             textInfo.SetBounds(10, 265, 235, 75);
 
+            Controls.Add(title);
+            Controls.Add(type);
+            Controls.Add(documentCode);
+            Controls.Add(receiver);
+            Controls.Add(sender);
+            Controls.Add(time);
+            Controls.Add(text);
             Controls.Add(titleInfo);
             Controls.Add(typeInfo);
             Controls.Add(documentCodeInfo);
@@ -150,21 +135,6 @@ namespace DocumentManagement
             Controls.Add(receiverInfo);
             Controls.Add(senderInfo);
             Controls.Add(textInfo);
-        }
-
-        private void AddEditForms()
-        {
-
-        }
-
-        private void EditEvent(object sender, EventArgs e)
-        {
-
-        }
-
-        private void CommitEditEvent(object sender, EventArgs e)
-        {
-
         }
     }
 }

@@ -24,25 +24,23 @@ namespace DocumentManagement
             CompanyType type4 = new CompanyType("Корпорация");
             CompanyType type5 = new CompanyType("Муниципалитет");
             CompanyType type6 = new CompanyType("Ассоциация");
-            SqlCompanyTypeDAO.AddCompanyType(type1);
-            SqlCompanyTypeDAO.AddCompanyType(type2);
-            SqlCompanyTypeDAO.AddCompanyType(type3);
-            SqlCompanyTypeDAO.AddCompanyType(type4);
-            SqlCompanyTypeDAO.AddCompanyType(type5);
-            SqlCompanyTypeDAO.AddCompanyType(type6);
+            SqlCompanyType.AddCompanyType(type1);
+            SqlCompanyType.AddCompanyType(type2);
+            SqlCompanyType.AddCompanyType(type3);
+            SqlCompanyType.AddCompanyType(type4);
+            SqlCompanyType.AddCompanyType(type5);
+            SqlCompanyType.AddCompanyType(type6);
 
-            DocumentType dtype1 = new DocumentType("Бизнес план");
             DocumentType dtype2 = new DocumentType("Справка");
             DocumentType dtype3 = new DocumentType("Акт");
             DocumentType dtype4 = new DocumentType("Приказ");
             DocumentType dtype5 = new DocumentType("Докладная записка");
-            SqlDocumentTypeDAO.AddDocumentType(dtype1);
-            SqlDocumentTypeDAO.AddDocumentType(dtype2);
-            SqlDocumentTypeDAO.AddDocumentType(dtype3);
-            SqlDocumentTypeDAO.AddDocumentType(dtype4);
-            SqlDocumentTypeDAO.AddDocumentType(dtype5);
+            SqlDocumentType.AddDocumentType(dtype1);
+            SqlDocumentType.AddDocumentType(dtype2);
+            SqlDocumentType.AddDocumentType(dtype3);
+            SqlDocumentType.AddDocumentType(dtype4);
+            SqlDocumentType.AddDocumentType(dtype5);
             */
-
         }
 
         private void AddCompany_Click(object sender, EventArgs e)
@@ -78,7 +76,8 @@ namespace DocumentManagement
             }
             else
             {
-                DeleteCompany(company);
+                company.Delete();
+                company = null;
                 UpdateCompaniesBox();
             }
         }
@@ -116,54 +115,45 @@ namespace DocumentManagement
             }
             else
             {
-                List<Company> companies = SqlCompanyDAO.GetAllCompanies();
-                foreach(Company c in companies)
-                {
-                    if(c.Director.Id == person.Id)
-                    {
-                        DeleteCompany(c);
-                    }
-                }
-                SqlPersonDAO.DeletePerson(person.Id);
+                person.Delete();
+                person = null;
                 UpdatePersonsBox();
                 UpdateCompaniesBox();
             }
+        }
+
+        private void DocumentManagementForm_Closing(object sender, FormClosingEventArgs e)
+        {
+            DialogResult dlg = MessageBox.Show("Save changes?", "Question", MessageBoxButtons.YesNo);
+
+            if (dlg == DialogResult.Yes)
+            {
+                SaveChanges();
+                e.Cancel = false;          
+            }
+            if (dlg == DialogResult.No)
+            {
+                e.Cancel = false;
+            }
+        }
+
+        public void SaveChanges()
+        {
+
         }
 
         public void UpdatePersonsBox()
         {
             personsBox.DataSource = null;
             personsBox.Items.Clear();
-            personsBox.DataSource = SqlPersonDAO.GetAllPersons();
+            personsBox.DataSource = SqlPerson.GetAllPersons();
         }
 
         public void UpdateCompaniesBox()
         {
             companiesBox.DataSource = null;
             companiesBox.Items.Clear();
-            companiesBox.DataSource = SqlCompanyDAO.GetAllCompanies();
-        }
-
-        private void DeleteCompany(Company company)
-        {
-            Director director = company.Director;
-            director.Working = false;
-            SqlPersonDAO.UpdatePerson(director);
-
-            Chancery chancery = company.CompanyChancery;
-            MainSecretary mainSecretary = chancery.MainSecretary;
-            if (mainSecretary != null)
-            {
-                mainSecretary.Working = false;
-                SqlPersonDAO.UpdatePerson(mainSecretary);
-            }
-            List<Secretary> secretaries = chancery.Secretaries;
-            foreach (Secretary secretary in secretaries)
-            {
-                secretary.Working = false;
-                SqlPersonDAO.UpdatePerson(secretary);
-            }
-            SqlCompanyDAO.DeleteCompany(company.Id);
+            companiesBox.DataSource = SqlCompany.GetAllCompanies();
         }
     } 
 }

@@ -1,4 +1,7 @@
-﻿namespace DocumentManagement
+﻿using System;
+using System.Windows.Forms;
+
+namespace DocumentManagement
 {
     partial class DocumentManagementForm
     {
@@ -146,6 +149,7 @@
             this.Name = "DocumentManagementForm";
             this.Text = "DocumentManagementForm";
             this.ResumeLayout(false);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(DocumentManagementForm_Closing);
 
         }
 

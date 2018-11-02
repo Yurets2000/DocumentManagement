@@ -33,6 +33,8 @@ namespace DocumentManagement
 
             Label secretaries = new Label
             {
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleCenter,
                 Font = new Font("Monotype Corsiva", 14.25F, FontStyle.Italic, GraphicsUnit.Point, ((byte)(204))),
                 Text = "Список секретарей"
             };
@@ -40,6 +42,8 @@ namespace DocumentManagement
 
             Label mainSecretary = new Label
             {
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleCenter,
                 Font = new Font("Monotype Corsiva", 14.25F, FontStyle.Italic, GraphicsUnit.Point, ((byte)(204))),
                 Text = "Управляющий секретариатом"
             };
@@ -87,12 +91,14 @@ namespace DocumentManagement
             {
                 Name = "personsToSecretaryBox",
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                DataSource = SqlPersonDAO.GetAllPersons().Where(p => !p.Working).ToList()
+                DataSource = SqlPerson.GetAllPersons().Where(p => !p.Working).ToList()
             };
             personsToSecretaryBox.SetBounds(10, 250, 150, 30);
 
             Label archive = new Label
             {
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleCenter,
                 Font = new Font("Monotype Corsiva", 14.25F, FontStyle.Italic, GraphicsUnit.Point, ((byte)(204))),
                 Text = "Архив"
             };
@@ -118,6 +124,8 @@ namespace DocumentManagement
 
             Label pendingDocuments = new Label
             {
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleCenter,
                 Font = new Font("Monotype Corsiva", 14.25F, FontStyle.Italic, GraphicsUnit.Point, ((byte)(204))),
                 Text = "Документы к выполнению"
             };
@@ -182,7 +190,7 @@ namespace DocumentManagement
             {
                 Name = "personsToMainSecretaryBox",
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                DataSource = SqlPersonDAO.GetAllPersons().Where(p => !p.Working).ToList()
+                DataSource = SqlPerson.GetAllPersons().Where(p => !p.Working).ToList()
             };
             personsToMainSecretaryBox.SetBounds(250, 90, 250, 30);
             Controls.Add(addMainSecretaryButton);
@@ -208,8 +216,26 @@ namespace DocumentManagement
             editMainSecretaryButton.SetBounds(250, 150, 250, 30);
             editMainSecretaryButton.Click += new EventHandler(EditMainSecretaryEvent);
 
+            Button selectMainSecretaryButton = new Button
+            {
+                Name = "selectMainSecretaryButton",
+                BackColor = Color.Tomato,
+                Font = new Font("Monotype Corsiva", 14.25F, FontStyle.Italic, GraphicsUnit.Point, ((byte)(204))),
+                Text = "Выбрать"
+            };
+            selectMainSecretaryButton.SetBounds(250, 185, 250, 30);
+            selectMainSecretaryButton.Click += new EventHandler(SelectMainSecretaryButton_Click);
+
             Controls.Add(mainSecretaryInfo);
             Controls.Add(editMainSecretaryButton);
+            Controls.Add(selectMainSecretaryButton);
+        }
+
+        private void SelectMainSecretaryButton_Click(object sender, EventArgs e)
+        {
+            MainSecretaryInfoForm mainSecretaryInfoForm = new MainSecretaryInfoForm(chancery.MainSecretary);
+            mainSecretaryInfoForm.Activate();
+            mainSecretaryInfoForm.ShowDialog();
         }
 
         private void AddMainSecretaryEditForms()
@@ -228,7 +254,7 @@ namespace DocumentManagement
             {
                 Name = "personsToMainSecretaryBox",
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                DataSource = SqlPersonDAO.GetAllPersons().Where(p => !p.Working).ToList()
+                DataSource = SqlPerson.GetAllPersons().Where(p => !p.Working).ToList()
             };
             personsToMainSecretaryBox.SetBounds(250, 180, 250, 30);
 
@@ -255,11 +281,12 @@ namespace DocumentManagement
                 MessageBox.Show("Персона не выбрана!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
-            {  Person person = (Person)personsBox.SelectedItem;
-                EmployeeForm employeeForm = new EmployeeForm(person);
-                employeeForm.Disposed += new EventHandler(AddSecretaryDisposeEvent);
-                employeeForm.Activate();
-                employeeForm.ShowDialog();
+            {
+                Person person = (Person)personsBox.SelectedItem;
+                SecretaryForm secretaryForm = new SecretaryForm(person);
+                secretaryForm.Disposed += new EventHandler(AddSecretaryDisposeEvent);
+                secretaryForm.Activate();
+                secretaryForm.ShowDialog();
             }
         }
 
@@ -273,48 +300,39 @@ namespace DocumentManagement
             else
             {
                 Person person = (Person)personsBox.SelectedItem;
-                EmployeeForm employeeForm = new EmployeeForm(person);
-                employeeForm.Disposed += new EventHandler(AddMainSecretaryDisposeEvent);
-                employeeForm.Activate();
-                employeeForm.ShowDialog();
+                SecretaryForm secretaryForm = new SecretaryForm(person);
+                secretaryForm.Disposed += new EventHandler(AddMainSecretaryDisposeEvent);
+                secretaryForm.Activate();
+                secretaryForm.ShowDialog();
             }
         }
 
         private void EditMainSecretaryEvent(object sender, EventArgs e)
         {
             Control mainSecretaryInfo = Utils.FindControl(this, "mainSecretaryInfo");
+            Control selectMainSecretaryButton = Utils.FindControl(this, "selectMainSecretaryButton");
             Controls.Remove(mainSecretaryInfo);
+            Controls.Remove(selectMainSecretaryButton);
             Controls.Remove((Control)sender);
             AddMainSecretaryEditForms();
         }
 
         private void CommitEditMainSecretaryEvent(object sender, EventArgs e)
         {
-            bool correct = true;
             Control changeMainSecretaryButton = Utils.FindControl(this, "changeMainSecretaryButton");
             Control personsToMainSecretaryBox = Utils.FindControl(this, "personsToMainSecretaryBox");
-            try
+
+            if (mainSecretaryChanged)
             {
-                if (mainSecretaryChanged)
-                {
-                    MainSecretary oldMainSecretary = chancery.MainSecretary;
-                    oldMainSecretary.Working = false;
-                    SqlPersonDAO.UpdatePerson(oldMainSecretary);
-                    chancery.MainSecretary = null;
-                    SqlChanceryDAO.UpdateChancery(chancery);
-                    SqlMainSecretaryDAO.DeleteMainSecretary(oldMainSecretary.EmployeeId);
-                    int mainSecretaryId = SqlMainSecretaryDAO.AddMainSecretary(mainSecretary);
-                    mainSecretary.EmployeeId = mainSecretaryId;
-                    SqlPersonDAO.UpdatePerson(mainSecretary);
-                    chancery.MainSecretary = mainSecretary;
-                }
-            }catch(Exception ex)
-            {
-                MessageBox.Show("Неправильно введенные данные!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                correct = false;
-            }
-            if (correct)
-            {
+                //Удаляем старого управляющего
+                chancery.MainSecretary.Delete();
+                chancery.MainSecretary = null;
+                //Добавляем нового управляющего
+                mainSecretary.Persist();
+                chancery.MainSecretary = mainSecretary;
+                //Обновляем секретариат
+                chancery.Update();
+
                 Controls.Remove(changeMainSecretaryButton);
                 Controls.Remove(personsToMainSecretaryBox);
                 Controls.Remove((Control)sender);
@@ -335,10 +353,10 @@ namespace DocumentManagement
             else
             {
                 Person person = (Person)personsBox.SelectedItem;
-                EmployeeForm employeeForm = new EmployeeForm(person);
-                employeeForm.Disposed += new EventHandler(ChangeMainSecretaryDisposeEvent);
-                employeeForm.Activate();
-                employeeForm.Show();
+                SecretaryForm secretaryForm = new SecretaryForm(person);
+                secretaryForm.Disposed += new EventHandler(ChangeMainSecretaryDisposeEvent);
+                secretaryForm.Activate();
+                secretaryForm.Show();
             }
         }
 
@@ -353,8 +371,8 @@ namespace DocumentManagement
             else
             {
                 chancery.Secretaries.Remove(secretary);
-                secretary.Working = false;
-                SqlPersonDAO.UpdatePerson(secretary);
+                secretary.Delete();
+                secretary = null;
             }
         }
 
@@ -392,7 +410,7 @@ namespace DocumentManagement
 
         private void SelectPendingDocumentEvent(object sender, EventArgs e)
         {
-            ComboBox pendingDocumentBox = (ComboBox)Utils.FindControl(this, "pendingDocumentBox");
+            ComboBox pendingDocumentBox = (ComboBox)Utils.FindControl(this, "pendingDocumentsBox");
             if (pendingDocumentBox.SelectedItem == null)
             {
                 MessageBox.Show("Документ не выбран!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -409,48 +427,42 @@ namespace DocumentManagement
         private void AddSecretaryDisposeEvent(object sender, EventArgs e)
         {
             //Создаем секретаря
-            EmployeeForm form = (EmployeeForm)sender;
-            Person person = form.Person;
-            Secretary secretary = new Secretary(person, chancery.ChanceryCompany, form.Salary);
-            Marker marker = new Marker(Marker.Color.BLUE);
-            int markerId = SqlMarkerDAO.AddMarker(marker);
-            marker.Id = markerId;
-            secretary.Marker = marker;
-            int secretaryId = SqlSecretaryDAO.AddSecretary(secretary);
-            secretary.EmployeeId = secretaryId;
-            SqlPersonDAO.UpdatePerson(secretary);
-            //Добавляем секретаря в секретариат
-            chancery.Secretaries.Add(secretary);
-            UpdateSecretariesBox();
-            UpdatePersonsToSecretaryBox();
+            SecretaryForm form = (SecretaryForm)sender;
+            if (form.CorrectOnClose)
+            {
+                Person person = form.Person;             
+                Marker marker = new Marker(Marker.Color.BLUE);
+                Secretary secretary = new Secretary(person, chancery.ChanceryCompany, form.Salary)
+                {
+                    Marker = marker,
+                    PendingDocuments = new List<Document>(),
+                    CreatedDocuments = new List<Document>()
+                };
+                secretary.Persist();
+                //Добавляем секретаря в секретариат
+                chancery.Secretaries.Add(secretary);
+
+                UpdateSecretariesBox();
+                UpdatePersonsToSecretaryBox();
+            }
         }
 
         private void AddMainSecretaryDisposeEvent(object sender, EventArgs e)
         {
-            bool correct = true;
             Control addMainSecretaryButton = Utils.FindControl(this, "addMainSecretaryButton");
             Control personsToMainSecretaryBox = Utils.FindControl(this, "personsToMainSecretaryBox");
             //Создаем управляющего секретариатом
-            EmployeeForm form = (EmployeeForm)sender;
-            try
+            SecretaryForm form = (SecretaryForm)sender;
+            if (form.CorrectOnClose)
             {
-                if (form.CorrectOnClose)
-                {
-                    Person person = form.Person;
-                    MainSecretary mainSecretary = new MainSecretary(person, chancery.ChanceryCompany, form.Salary);
-                    int mainSecretaryId = SqlMainSecretaryDAO.AddMainSecretary(mainSecretary);
-                    mainSecretary.EmployeeId = mainSecretaryId;
-                    SqlPersonDAO.UpdatePerson(mainSecretary);
-                    //Добавляем управляющего в секретариат
-                    chancery.MainSecretary = mainSecretary;
-                }
-            }catch(Exception ex)
-            {
-                MessageBox.Show("Неправильно введенные данные!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                correct = false;
-            }
-            if (correct)
-            {
+                Person person = form.Person;
+                MainSecretary mainSecretary = new MainSecretary(person, chancery.ChanceryCompany, form.Salary);
+                mainSecretary.Persist();
+                //Добавляем управляющего в секретариат
+                chancery.MainSecretary = mainSecretary;
+                //Обновляем секретариат
+                chancery.Update();
+
                 Controls.Remove(addMainSecretaryButton);
                 Controls.Remove(personsToMainSecretaryBox);
                 Controls.Remove((Control)sender);
@@ -462,7 +474,7 @@ namespace DocumentManagement
 
         private void ChangeMainSecretaryDisposeEvent(object sender, EventArgs e)
         {
-            EmployeeForm form = (EmployeeForm)sender;
+            SecretaryForm form = (SecretaryForm)sender;
             if (form.CorrectOnClose)
             {
                 Person person = form.Person;
@@ -484,7 +496,7 @@ namespace DocumentManagement
             ComboBox personsToMainSecretaryBox = (ComboBox)Utils.FindControl(this, "personsToMainSecretaryBox");
             personsToMainSecretaryBox.DataSource = null;
             personsToMainSecretaryBox.Items.Clear();
-            personsToMainSecretaryBox.DataSource = SqlPersonDAO.GetAllPersons().Where(p => !p.Working).ToList();
+            personsToMainSecretaryBox.DataSource = SqlPerson.GetAllPersons().Where(p => !p.Working).ToList();
         }
 
         public void UpdatePersonsToSecretaryBox()
@@ -492,7 +504,7 @@ namespace DocumentManagement
             ComboBox personsToSecretaryBox = (ComboBox)Utils.FindControl(this, "personsToSecretaryBox");
             personsToSecretaryBox.DataSource = null;
             personsToSecretaryBox.Items.Clear();
-            personsToSecretaryBox.DataSource = SqlPersonDAO.GetAllPersons().Where(p => !p.Working).ToList();
+            personsToSecretaryBox.DataSource = SqlPerson.GetAllPersons().Where(p => !p.Working).ToList();
         }
 
         public void UpdateArchiveBox()

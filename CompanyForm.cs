@@ -12,7 +12,7 @@ namespace DocumentManagement
 {
     public class CompanyForm : Form
     {
-        private Director _director;
+        private Director director;
 
         public CompanyForm()
         {
@@ -62,7 +62,7 @@ namespace DocumentManagement
             {
                 Name = "typeBox",
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                DataSource = SqlCompanyTypeDAO.GetAllCompanyTypes()
+                DataSource = SqlCompanyType.GetAllCompanyTypes()
             };
             typeBox.SetBounds(95, 90, 150, 30);
 
@@ -80,7 +80,7 @@ namespace DocumentManagement
             {
                 Name = "personsBox",
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                DataSource = SqlPersonDAO.GetAllPersons().Where(p => !p.Working).ToList()
+                DataSource = SqlPerson.GetAllPersons().Where(p => !p.Working).ToList()
             };
             personsBox.SetBounds(10, 160, 235, 30);
 
@@ -115,7 +115,7 @@ namespace DocumentManagement
             else
             {
                 Person person = (Person)personsBox.SelectedItem;
-                EmployeeForm directorForm = new EmployeeForm(person);
+                DirectorForm directorForm = new DirectorForm(person);
                 directorForm.Disposed += new EventHandler(DirectorFormDisposeEvent);
                 directorForm.Activate();
                 directorForm.ShowDialog();
@@ -124,18 +124,21 @@ namespace DocumentManagement
 
         private void DirectorFormDisposeEvent(object sender, EventArgs e)
         {
-            EmployeeForm form = (EmployeeForm)sender;
+            DirectorForm form = (DirectorForm)sender;
             if (form.CorrectOnClose)
             {
                 Person person = form.Person;
-                _director = new Director(person, null, form.Salary);
+                director = new Director(person, null, form.Signature, form.Salary)
+                {
+                    PendingDocuments = new List<Document>()
+                };
             }
         }
 
         private void AddCompanyButton_Click(object sender, EventArgs e)
         {
             bool filled = Utils.CheckFormFilled(this);
-            if (filled && _director != null)
+            if (filled && director != null)
             {
                 String name = Utils.FindControl(this, "nameBox").Text;
                 String address = Utils.FindControl(this, "addressBox").Text;
@@ -146,22 +149,8 @@ namespace DocumentManagement
                 if (nameValidated && addressValidated)
                 {
                     Chancery chancery = new Chancery();
-                    Company company = new Company(_director, type, chancery, name, address);
-                    //Добавляем директора в БД
-                    int directorId = SqlDirectorDAO.AddDirector(_director);
-                    _director.EmployeeId = directorId;
-                    SqlPersonDAO.UpdatePerson(_director);
-                    //Добавляем секретариат в БД
-                    int chanceryId = SqlChanceryDAO.AddChancery(chancery);
-                    chancery.Id = chanceryId;
-                    //Добавляем компанию в БД
-                    int companyId = SqlCompanyDAO.AddCompany(company);
-                    company.Id = companyId;
-                    //Обновляем поля в объектах Директор и Секретариат
-                    _director.Company = company;
-                    chancery.ChanceryCompany = company;
-                    SqlDirectorDAO.UpdateDirector(_director);
-                    SqlChanceryDAO.UpdateChancery(chancery);
+                    Company company = new Company(director, type, chancery, name, address);
+                    company.Persist();
                     DocumentManagementForm form = (DocumentManagementForm)Application.OpenForms["DocumentManagementForm"];
                     form.UpdateCompaniesBox();
                     Close();

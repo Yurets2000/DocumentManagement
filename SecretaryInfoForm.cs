@@ -22,126 +22,208 @@ namespace DocumentManagement
 
         private void InitializeForm()
         {
-            Width = 500;
+            Width = 900;
             Height = 500;
             Name = "SecretaryInfoForm";
             Text = "Secretary Info Form";
             BackColor = Color.MediumTurquoise;
             StartPosition = FormStartPosition.CenterScreen;
 
+            Label info = new Label
+            {
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Font = new Font("Monotype Corsiva", 14.25F, FontStyle.Italic, GraphicsUnit.Point, ((byte)(204))),
+                Text = "Информация о секретаре"
+            };
+            info.SetBounds(10, 20, 250, 30);
+
             Label name = new Label
             {
                 Text = "Имя:"
             };
-            name.SetBounds(10, 20, 80, 30);
+            name.SetBounds(10, 55, 80, 30);
 
             Label nameInfo = new Label
             {
                 Text = secretary.Name
             };
-            nameInfo.SetBounds(95, 20, 250, 30);
+            nameInfo.SetBounds(95, 55, 150, 30);
 
             Label surname = new Label
             {
                 Text = "Фамилия:"
             };
-            surname.SetBounds(10, 55, 80, 30);
+            surname.SetBounds(10, 90, 80, 30);
 
             Label surnameInfo = new Label
             {
                 Text = secretary.Surname
             };
-            surnameInfo.SetBounds(95, 55, 250, 30);
+            surnameInfo.SetBounds(95, 90, 150, 30);
 
             Label age = new Label
             {
                 Text = "Возраст:"
             };
-            age.SetBounds(10, 90, 80, 30);
+            age.SetBounds(10, 125, 80, 30);
 
             Label ageInfo = new Label
             {
                 Text = secretary.Age.ToString()
             };
-            ageInfo.SetBounds(95, 90, 250, 30);
+            ageInfo.SetBounds(95, 125, 150, 30);
 
             Label salary = new Label
             {
                 Text = "Зарплата:"
             };
-            salary.SetBounds(10, 125, 80, 30);
+            salary.SetBounds(10, 160, 80, 30);
 
             Label salaryInfo = new Label
             {
                 Text = secretary.Salary.ToString()
             };
-            salaryInfo.SetBounds(95, 125, 250, 30);
+            salaryInfo.SetBounds(95, 160, 150, 30);
 
             Label workplace = new Label
             {
                 Text = "Место работы:"
             };
-            workplace.SetBounds(10, 160, 80, 30);
+            workplace.SetBounds(10, 195, 80, 30);
 
             Label workplaceInfo = new Label
             {
                 Text = secretary.Company.ToString()
             };
-            workplaceInfo.SetBounds(95, 160, 250, 30);
-
-            Label documents = new Label
-            {
-                Text = "Документы:"
-            };
-
-            ComboBox documentsBox = new ComboBox
-            {
-                Name = "documentsBox",
-                DropDownStyle = ComboBoxStyle.DropDownList,
-                DataSource = secretary.PendingDocuments
-            };
-            documentsBox.SetBounds(10, 195, 220, 30);
+            workplaceInfo.SetBounds(95, 195, 150, 30);
 
             Button createDocumentButton = new Button
             {
                 Name = "createDocumentButton",
                 BackColor = Color.Tomato,
                 Font = new Font("Monotype Corsiva", 14.25F, FontStyle.Italic, GraphicsUnit.Point, ((byte)(204))),
-                Text = "Создать"
+                Text = "Создать документ"
             };
-            createDocumentButton.SetBounds(10, 285, 220, 30);
-            createDocumentButton.Click += new EventHandler(CreateDocumentEvent);
+            createDocumentButton.SetBounds(10, 265, 245, 30);
+            createDocumentButton.Click += new EventHandler(CreateDocumentButton_Click);
 
-            Button removeDocumentButton = new Button
+            Label createdDocuments = new Label
             {
-                Name = "createDocumentButton",
-                BackColor = Color.Tomato,
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleCenter,
                 Font = new Font("Monotype Corsiva", 14.25F, FontStyle.Italic, GraphicsUnit.Point, ((byte)(204))),
-                Text = "Удалить"
+                Text = "Созданные документы"
             };
-            removeDocumentButton.SetBounds(10, 320, 220, 30);
-            removeDocumentButton.Click += new EventHandler(RemoveDocumentEvent);
+            createdDocuments.SetBounds(270, 20, 250, 30);
 
-            Button sendCopyToArchiveButton = new Button
+            ComboBox createdDocumentsBox = new ComboBox
             {
-                Name = "sendCopyToArchiveButton",
-                BackColor = Color.Tomato,
-                Font = new Font("Monotype Corsiva", 14.25F, FontStyle.Italic, GraphicsUnit.Point, ((byte)(204))),
-                Text = "Отправить в архив"
+                Name = "createdDocumentsBox",
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                DataSource = secretary.CreatedDocuments
             };
-            sendCopyToArchiveButton.SetBounds(10, 355, 220, 30);
-            sendCopyToArchiveButton.Click += new EventHandler(SendToArchiveEvent);
+            createdDocumentsBox.SetBounds(270, 55, 250, 30);
 
-            Button selectDocumentButton = new Button
+            Button selectCreatedDocumentButton = new Button
             {
-                Name = "selectDocumentButton",
+                Name = "selectCreatedDocumentButton",
                 BackColor = Color.Tomato,
                 Font = new Font("Monotype Corsiva", 14.25F, FontStyle.Italic, GraphicsUnit.Point, ((byte)(204))),
                 Text = "Просмотреть"
             };
-            selectDocumentButton.SetBounds(10, 390, 220, 30);
-            selectDocumentButton.Click += new EventHandler(SelectDocumentEvent);
+            selectCreatedDocumentButton.SetBounds(270, 105, 250, 30);
+            selectCreatedDocumentButton.Click += new EventHandler(SelectCreatedDocumentButton_Click);
 
+            Button editCreatedDocumentButton = new Button
+            {
+                Name = "editCreatedDocumentButton",
+                BackColor = Color.Tomato,
+                Font = new Font("Monotype Corsiva", 14.25F, FontStyle.Italic, GraphicsUnit.Point, ((byte)(204))),
+                Text = "Редактировать"
+            };
+            editCreatedDocumentButton.SetBounds(270, 140, 250, 30);
+            editCreatedDocumentButton.Click += new EventHandler(EditCreatedDocumentButton_Click);
+
+            Button removeCreatedDocumentButton = new Button
+            {
+                Name = "removeCreatedDocumentButton",
+                BackColor = Color.Tomato,
+                Font = new Font("Monotype Corsiva", 14.25F, FontStyle.Italic, GraphicsUnit.Point, ((byte)(204))),
+                Text = "Удалить"
+            };
+            removeCreatedDocumentButton.SetBounds(270, 175, 250, 30);
+            removeCreatedDocumentButton.Click += new EventHandler(RemoveCreatedDocumentButton_Click);
+
+            Button sendCreatedDocumentButton = new Button
+            {
+                Name = "sendCreatedDocumentButton",
+                BackColor = Color.Tomato,
+                Font = new Font("Monotype Corsiva", 14.25F, FontStyle.Italic, GraphicsUnit.Point, ((byte)(204))),
+                Text = "Отправить директору"
+            };
+            sendCreatedDocumentButton.SetBounds(270, 210, 250, 30);
+            sendCreatedDocumentButton.Click += new EventHandler(SendCreatedDocumentButton_Click);
+
+            //------------------------------------------------------------------------------
+            Label pendingDocuments = new Label
+            {
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Font = new Font("Monotype Corsiva", 14.25F, FontStyle.Italic, GraphicsUnit.Point, ((byte)(204))),
+                Text = "Документы к редактированию"
+            };
+            pendingDocuments.SetBounds(540, 20, 250, 30);
+
+            ComboBox pendingDocumentsBox = new ComboBox
+            {
+                Name = "pendingDocumentsBox",
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                DataSource = secretary.PendingDocuments
+            };
+            pendingDocumentsBox.SetBounds(540, 55, 250, 30);
+
+            Button selectPendingDocumentButton = new Button
+            {
+                Name = "selectPendingDocumentButton",
+                BackColor = Color.Tomato,
+                Font = new Font("Monotype Corsiva", 14.25F, FontStyle.Italic, GraphicsUnit.Point, ((byte)(204))),
+                Text = "Просмотреть"
+            };
+            selectPendingDocumentButton.SetBounds(540, 105, 250, 30);
+            selectPendingDocumentButton.Click += new EventHandler(SelectPendingDocumentButton_Click);
+
+            Button editPendingDocumentButton = new Button
+            {
+                Name = "editPendingDocumentButton",
+                BackColor = Color.Tomato,
+                Font = new Font("Monotype Corsiva", 14.25F, FontStyle.Italic, GraphicsUnit.Point, ((byte)(204))),
+                Text = "Редактировать"
+            };
+            editPendingDocumentButton.SetBounds(540, 140, 250, 30);
+            editPendingDocumentButton.Click += new EventHandler(EditPendingDocumentButton_Click);
+
+            Button removePendingDocumentButton = new Button
+            {
+                Name = "removePendingDocumentButton",
+                BackColor = Color.Tomato,
+                Font = new Font("Monotype Corsiva", 14.25F, FontStyle.Italic, GraphicsUnit.Point, ((byte)(204))),
+                Text = "Удалить"
+            };
+            removePendingDocumentButton.SetBounds(540, 175, 250, 30);
+            removePendingDocumentButton.Click += new EventHandler(RemovePendingDocumentButton_Click);
+
+            Button sendPendingDocumentButton = new Button
+            {
+                Name = "sendPendingDocumentButton",
+                BackColor = Color.Tomato,
+                Font = new Font("Monotype Corsiva", 14.25F, FontStyle.Italic, GraphicsUnit.Point, ((byte)(204))),
+                Text = "Отправить директору"
+            };
+            sendPendingDocumentButton.SetBounds(540, 210, 250, 30);
+            sendPendingDocumentButton.Click += new EventHandler(SendPendingDocumentButton_Click);
+
+            Controls.Add(info);
             Controls.Add(name);
             Controls.Add(nameInfo);
             Controls.Add(surname);
@@ -149,58 +231,28 @@ namespace DocumentManagement
             Controls.Add(age);
             Controls.Add(ageInfo);
             Controls.Add(salary);
-            Controls.Add(salaryInfo);
             Controls.Add(workplace);
             Controls.Add(workplaceInfo);
-            Controls.Add(documentsBox);
+            Controls.Add(createdDocuments);
+            Controls.Add(createdDocumentsBox);
             Controls.Add(createDocumentButton);
-            Controls.Add(removeDocumentButton);
-            Controls.Add(sendCopyToArchiveButton);
-            Controls.Add(selectDocumentButton);
+            Controls.Add(selectCreatedDocumentButton);
+            Controls.Add(editCreatedDocumentButton);
+            Controls.Add(removeCreatedDocumentButton);
+            Controls.Add(sendCreatedDocumentButton);
+            Controls.Add(pendingDocuments);
+            Controls.Add(pendingDocumentsBox);
+            Controls.Add(selectPendingDocumentButton);
+            Controls.Add(editPendingDocumentButton);
+            Controls.Add(removePendingDocumentButton);
+            Controls.Add(sendPendingDocumentButton);
+            
+            AddInfoForms();
         }
 
-        private void CreateDocumentEvent(object sender, EventArgs e)
+        private void SelectPendingDocumentButton_Click(object sender, EventArgs e)
         {
-            DocumentForm documentForm = new DocumentForm();
-            documentForm.Disposed += new EventHandler(DocumentFormDisposedEvent);
-            documentForm.Activate();
-            documentForm.ShowDialog();
-        }
-
-        private void RemoveDocumentEvent(object sender, EventArgs e)
-        {
-            ComboBox documentsBox = (ComboBox)Utils.FindControl(this, "documentsBox");
-            Document document = (Document)documentsBox.SelectedItem;
-            if (document == null)
-            {
-                MessageBox.Show("Документ не выбран!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            else
-            {
-                secretary.RemoveDocument(document);
-                UpdateDocumentsBox();
-            }
-        }
-
-        private void SendToArchiveEvent(object sender, EventArgs e)
-        {
-            ComboBox documentsBox = (ComboBox)Utils.FindControl(this, "documentsBox");
-            Document document = (Document)documentsBox.SelectedItem;
-            if (document == null)
-            {
-                MessageBox.Show("Документ не выбран!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            else
-            {
-                secretary.SendDocumentToArchive(document);
-                ChanceryInfoForm chanceryInfoForm = (ChanceryInfoForm) Application.OpenForms["ChanceryInfoForm"];
-                chanceryInfoForm.UpdateArchiveBox();
-            }
-        }
-
-        private void SelectDocumentEvent(object sender, EventArgs e)
-        {
-            ComboBox documentsBox = (ComboBox)Utils.FindControl(this, "documentsBox");
+            ComboBox documentsBox = (ComboBox)Utils.FindControl(this, "pendingDocumentsBox");
             Document document = (Document)documentsBox.SelectedItem;
             if (document == null)
             {
@@ -214,24 +266,227 @@ namespace DocumentManagement
             }
         }
 
-        private void DocumentFormDisposedEvent(object sender, EventArgs e)
+        private void RemovePendingDocumentButton_Click(object sender, EventArgs e)
         {
-            DocumentForm documentForm = (DocumentForm)sender;
-            if (documentForm.Correct)
+            ComboBox documentsBox = (ComboBox)Utils.FindControl(this, "pendingDocumentsBox");
+            Document document = (Document)documentsBox.SelectedItem;
+            if (document == null)
             {
-                DocumentType type = documentForm.Type;
-                int documentCode = documentForm.DocumentCode;
-                string title = documentForm.Title;
-                string text = documentForm.Content;
-                Company receiver = documentForm.Receiver;
-                Document document = secretary.CreateDocument(type, documentCode, title, text, receiver);
-                secretary.SendDocument(document);
+                MessageBox.Show("Документ не выбран!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                secretary.RemoveCreatedDocument(document);
+                UpdatePendingDocumentsBox();
             }
         }
 
-        public void UpdateDocumentsBox()
+        private void EditPendingDocumentButton_Click(object sender, EventArgs e)
         {
-            ComboBox documentsBox = (ComboBox)Utils.FindControl(this, "documentsBox");
+            ComboBox createdDocumentsBox = (ComboBox)Utils.FindControl(this, "pendingDocumentsBox");
+            Document document = (Document)createdDocumentsBox.SelectedItem;
+            if (document == null)
+            {
+                MessageBox.Show("Документ не выбран!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                DocumentEditForm documentEditForm = new DocumentEditForm(secretary, document);
+                documentEditForm.Disposed += new EventHandler(DocumentEditForm_Disposed);
+                documentEditForm.Activate();
+                documentEditForm.ShowDialog();
+            }
+        }
+
+        private void SendPendingDocumentButton_Click(object sender, EventArgs e)
+        {
+            ComboBox createdDocumentsBox = (ComboBox)Utils.FindControl(this, "pendingDocumentsBox");
+            Document document = (Document)createdDocumentsBox.SelectedItem;
+            if (document == null)
+            {
+                MessageBox.Show("Документ не выбран!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                secretary.SendPendingDocument(document);
+                UpdatePendingDocumentsBox();
+            }
+        }
+
+        private void AddInfoForms()
+        {
+            Label salaryInfo = new Label
+            {
+                Name = "salaryInfo",
+                Text = secretary.Salary.ToString()
+            };
+            salaryInfo.SetBounds(95, 160, 150, 30);
+
+            Button editSecretaryButton = new Button
+            {
+                Name = "editSecretaryButton",
+                BackColor = Color.Tomato,
+                Font = new Font("Monotype Corsiva", 14.25F, FontStyle.Italic, GraphicsUnit.Point, ((byte)(204))),
+                Text = "Редактировать"
+            };
+            editSecretaryButton.SetBounds(10, 230, 245, 30);
+            editSecretaryButton.Click += new EventHandler(EditSecretaryButton_Click);
+
+            Controls.Add(salaryInfo);
+            Controls.Add(editSecretaryButton);
+        }
+
+        private void AddEditForms()
+        {
+            TextBox salaryBox = new TextBox
+            {
+                Name = "salaryBox",
+                Text = secretary.Salary.ToString()
+            };
+            salaryBox.SetBounds(95, 160, 150, 30);
+
+            Button commitEditSecretaryButton = new Button
+            {
+                Name = "commitEditSecretaryButton",
+                BackColor = Color.Tomato,
+                Font = new Font("Monotype Corsiva", 14.25F, FontStyle.Italic, GraphicsUnit.Point, ((byte)(204))),
+                Text = "Подтвердить"
+            };
+            commitEditSecretaryButton.SetBounds(10, 230, 245, 30);
+            commitEditSecretaryButton.Click += new EventHandler(CommitEditSecretaryButton_Click);
+
+            Controls.Add(salaryBox);
+            Controls.Add(commitEditSecretaryButton);
+        }
+
+        private void EditSecretaryButton_Click(object sender, EventArgs e)
+        {
+            Control salaryInfo = Utils.FindControl(this, "salaryInfo");
+            Controls.Remove(salaryInfo);    
+            Controls.Remove((Control)sender);
+
+            AddEditForms();
+        }
+
+        private void CommitEditSecretaryButton_Click(object sender, EventArgs e)
+        {
+            Control salaryBox = Utils.FindControl(this, "salaryBox");
+
+            bool filled = !String.IsNullOrWhiteSpace(salaryBox.Text);
+
+            if (filled)
+            {
+                string salaryString = salaryBox.Text;
+
+                bool salaryValidated = SecretaryFormValidator.ValidateSalary(salaryString);
+
+                if (salaryValidated)
+                {
+                    secretary.Salary = int.Parse(salaryBox.Text);
+                    secretary.Update();
+
+                    Controls.Remove(salaryBox);
+                    Controls.Remove((Control)sender);
+                    AddInfoForms();
+                }
+                else
+                {
+                    MessageBox.Show("Неправильно введенные данные!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Одно из полей пустое!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void CreateDocumentButton_Click(object sender, EventArgs e)
+        {
+            DocumentForm documentForm = new DocumentForm(secretary);
+            documentForm.Activate();
+            documentForm.ShowDialog();
+        }
+
+        private void SelectCreatedDocumentButton_Click(object sender, EventArgs e)
+        {
+            ComboBox documentsBox = (ComboBox)Utils.FindControl(this, "createdDocumentsBox");
+            Document document = (Document)documentsBox.SelectedItem;
+            if (document == null)
+            {
+                MessageBox.Show("Документ не выбран!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                DocumentInfoForm documentInfoForm = new DocumentInfoForm(document);
+                documentInfoForm.Activate();
+                documentInfoForm.ShowDialog();
+            }
+        }
+
+        private void EditCreatedDocumentButton_Click(object sender, EventArgs e)
+        {
+            ComboBox createdDocumentsBox = (ComboBox) Utils.FindControl(this, "createdDocumentsBox");
+            Document document = (Document)createdDocumentsBox.SelectedItem;
+            if (document == null)
+            {
+                MessageBox.Show("Документ не выбран!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                DocumentEditForm documentEditForm = new DocumentEditForm(secretary, document);
+                documentEditForm.Disposed += new EventHandler(DocumentEditForm_Disposed);
+                documentEditForm.Activate();
+                documentEditForm.ShowDialog();
+            }
+        }
+
+        private void RemoveCreatedDocumentButton_Click(object sender, EventArgs e)
+        {
+            ComboBox documentsBox = (ComboBox)Utils.FindControl(this, "createdDocumentsBox");
+            Document document = (Document)documentsBox.SelectedItem;
+            if (document == null)
+            {
+                MessageBox.Show("Документ не выбран!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                secretary.RemoveCreatedDocument(document);
+                UpdateCreatedDocumentsBox();
+            }
+        }
+
+        private void SendCreatedDocumentButton_Click(object sender, EventArgs e)
+        {
+            ComboBox createdDocumentsBox = (ComboBox)Utils.FindControl(this, "createdDocumentsBox");
+            Document document = (Document)createdDocumentsBox.SelectedItem;
+            if (document == null)
+            {
+                MessageBox.Show("Документ не выбран!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                secretary.SendCreatedDocument(document);
+                UpdateCreatedDocumentsBox();
+            }
+        }
+
+        private void DocumentEditForm_Disposed(object sender, EventArgs e)
+        {
+            UpdateCreatedDocumentsBox();
+            UpdatePendingDocumentsBox();
+        }
+
+        public void UpdateCreatedDocumentsBox()
+        {
+            ComboBox documentsBox = (ComboBox)Utils.FindControl(this, "createdDocumentsBox");
+            documentsBox.DataSource = null;
+            documentsBox.Items.Clear();
+            documentsBox.DataSource = secretary.CreatedDocuments;
+        }
+
+        public void UpdatePendingDocumentsBox()
+        {
+            ComboBox documentsBox = (ComboBox)Utils.FindControl(this, "pendingDocumentsBox");
             documentsBox.DataSource = null;
             documentsBox.Items.Clear();
             documentsBox.DataSource = secretary.PendingDocuments;

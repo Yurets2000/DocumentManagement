@@ -1,11 +1,11 @@
-C:\Users\Yurets\source\repos\DocumentManagement\DocumentManagement\bin\Debug\DocumentManagement.exe.config
-C:\Users\Yurets\source\repos\DocumentManagement\DocumentManagement\bin\Debug\DocumentManagement.exe
-C:\Users\Yurets\source\repos\DocumentManagement\DocumentManagement\bin\Debug\DocumentManagement.pdb
+C:\Users\Yurets\source\repos\DocumentManagement\DocumentManagement\obj\Debug\DocumentManagement.csprojResolveAssemblyReference.cache
 C:\Users\Yurets\source\repos\DocumentManagement\DocumentManagement\obj\Debug\DocumentManagement.DocumentManagementForm.resources
 C:\Users\Yurets\source\repos\DocumentManagement\DocumentManagement\obj\Debug\DocumentManagement.Form1.resources
 C:\Users\Yurets\source\repos\DocumentManagement\DocumentManagement\obj\Debug\DocumentManagement.Properties.Resources.resources
 C:\Users\Yurets\source\repos\DocumentManagement\DocumentManagement\obj\Debug\DocumentManagement.csproj.GenerateResource.Cache
 C:\Users\Yurets\source\repos\DocumentManagement\DocumentManagement\obj\Debug\DocumentManagement.csproj.CoreCompileInputs.cache
+C:\Users\Yurets\source\repos\DocumentManagement\DocumentManagement\bin\Debug\DocumentManagement.exe.config
+C:\Users\Yurets\source\repos\DocumentManagement\DocumentManagement\bin\Debug\DocumentManagement.exe
+C:\Users\Yurets\source\repos\DocumentManagement\DocumentManagement\bin\Debug\DocumentManagement.pdb
 C:\Users\Yurets\source\repos\DocumentManagement\DocumentManagement\obj\Debug\DocumentManagement.exe
 C:\Users\Yurets\source\repos\DocumentManagement\DocumentManagement\obj\Debug\DocumentManagement.pdb
-C:\Users\Yurets\source\repos\DocumentManagement\DocumentManagement\obj\Debug\DocumentManagement.csprojResolveAssemblyReference.cache

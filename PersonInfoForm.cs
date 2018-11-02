@@ -167,9 +167,11 @@ namespace DocumentManagement
                     person.Name = name;
                     person.Surname = surname;
                     person.Age = int.Parse(ageString);
-                    SqlPersonDAO.UpdatePerson(person);
+                    person.Update();
+
                     DocumentManagementForm form = (DocumentManagementForm)Application.OpenForms["DocumentManagementForm"];
                     form.UpdatePersonsBox();
+                    form.UpdateCompaniesBox();
                     Controls.Remove(nameBox);
                     Controls.Remove(surnameBox);
                     Controls.Remove(ageBox);

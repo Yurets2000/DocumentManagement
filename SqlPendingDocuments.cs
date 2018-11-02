@@ -9,28 +9,27 @@ using System.Data;
 
 namespace DocumentManagement
 {
-
-    public class SqlSecretaryPendingDocumentsDAO
+    public class SqlPendingDocuments
     {
         private static string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
-        public static List<Document> GetPendingDocuments(int secretaryId)
+        public static List<Document> GetPendingDocuments(int chanceryId)
         {
             List<Document> documents = new List<Document>();
-            string sqlExpression = "SELECT * FROM SecretaryPendingDocuments WHERE SecretaryId = @secretaryId";
+            string sqlExpression = "SELECT * FROM PendingDocuments WHERE ChanceryId = @chanceryId AND Deleted = 0";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
-                command.Parameters.Add("@secretaryId", SqlDbType.Int);
-                command.Parameters["@secretaryId"].Value = secretaryId;
+                command.Parameters.Add("@chanceryId", SqlDbType.Int);
+                command.Parameters["@chanceryId"].Value = chanceryId;
                 SqlDataReader reader = command.ExecuteReader();
                 if (reader.HasRows)
                 {
                     while (reader.Read())
                     {
                         int documentId = (int)reader["DocumentId"];
-                        Document document = SqlDocumentDAO.GetDocument(documentId);
+                        Document document = SqlDocument.GetDocument(documentId);
                         documents.Add(document);
                     }
                 }
@@ -38,31 +37,31 @@ namespace DocumentManagement
             return documents;
         }
 
-        public static void AddPendingDocument(int secretaryId, int documentId)
+        public static void AddPendingDocument(int chanceryId, int documentId)
         {
-            string sqlExpression = "INSERT INTO SecretaryPendingDocuments(SecretaryId, DocumentId) VALUES (@secretaryId, @documentId)";
+            string sqlExpression = "INSERT INTO PendingDocuments(ChanceryId, DocumentId) VALUES (@chanceryId, @documentId)";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
-                command.Parameters.Add("@secretaryId", SqlDbType.Int);
+                command.Parameters.Add("@chanceryId", SqlDbType.Int);
                 command.Parameters.Add("@documentId", SqlDbType.Int);
-                command.Parameters["@secretaryId"].Value = secretaryId;
+                command.Parameters["@chanceryId"].Value = chanceryId;
                 command.Parameters["@documentId"].Value = documentId;
                 command.ExecuteNonQuery();
             }
         }
 
-        public static void DeletePendingDocument(int secretaryId, int documentId)
+        public static void DeletePendingDocument(int chanceryId, int documentId)
         {
-            string sqlExpression = "DELETE FROM SecretaryPendingDocuments WHERE SecretaryId = @chanceryId AND DocumentId = @documentId";
+            string sqlExpression = "UPDATE PendingDocuments SET Deleted = 1 WHERE ChanceryId = @chanceryId AND DocumentId = @documentId";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
-                command.Parameters.Add("@secretaryId", SqlDbType.Int);
+                command.Parameters.Add("@chanceryId", SqlDbType.Int);
                 command.Parameters.Add("@documentId", SqlDbType.Int);
-                command.Parameters["@secretaryId"].Value = secretaryId;
+                command.Parameters["@chanceryId"].Value = chanceryId;
                 command.Parameters["@documentId"].Value = documentId;
                 command.ExecuteNonQuery();
             }

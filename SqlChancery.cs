@@ -9,14 +9,14 @@ using System.Data;
 
 namespace DocumentManagement
 {
-    public class SqlChanceryDAO
+    public class SqlChancery
     {
         private static string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
         public static List<Chancery> GetAllChanceries()
         {
             List<Chancery> chanceries = new List<Chancery>();
-            string sqlExpression = "SELECT * FROM Chancery";
+            string sqlExpression = "SELECT * FROM Chancery WHERE Deleted = 0";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -33,10 +33,10 @@ namespace DocumentManagement
                             Id = companyId,
                             InitCompany = true
                         };
-                        List<Document> archive = SqlArchiveDAO.GetArchivedDocuments(id);
-                        List<Document> pendingDocuments = SqlPendingDocumentsDAO.GetPendingDocuments(id);
-                        List<Secretary> secretaries = SqlSecretaryDAO.GetCompanySecretaries(companyId);
-                        MainSecretary mainSecretary = SqlMainSecretaryDAO.GetCompanyMainSecretary(companyId);
+                        List<Document> archive = SqlArchive.GetArchivedDocuments(id);
+                        List<Document> pendingDocuments = SqlPendingDocuments.GetPendingDocuments(id);
+                        List<Secretary> secretaries = SqlSecretary.GetCompanySecretaries(companyId);
+                        MainSecretary mainSecretary = SqlMainSecretary.GetCompanyMainSecretary(companyId);
                         Chancery chancery = new Chancery(chanceryCompany)
                         {
                             Id = id,
@@ -55,7 +55,7 @@ namespace DocumentManagement
         public static Chancery GetChancery(int id)
         {
             Chancery chancery = null;
-            string sqlExpression = "SELECT * FROM Chancery WHERE Id = @id";
+            string sqlExpression = "SELECT * FROM Chancery WHERE Id = @id AND Deleted = 0";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -73,10 +73,10 @@ namespace DocumentManagement
                             Id = companyId,
                             InitCompany = true
                         };
-                        List<Document> archive = SqlArchiveDAO.GetArchivedDocuments(id);
-                        List<Document> pendingDocuments = SqlPendingDocumentsDAO.GetPendingDocuments(id);
-                        List<Secretary> secretaries = SqlSecretaryDAO.GetCompanySecretaries(companyId);
-                        MainSecretary mainSecretary = SqlMainSecretaryDAO.GetCompanyMainSecretary(companyId);
+                        List<Document> archive = SqlArchive.GetArchivedDocuments(id);
+                        List<Document> pendingDocuments = SqlPendingDocuments.GetPendingDocuments(id);
+                        List<Secretary> secretaries = SqlSecretary.GetCompanySecretaries(companyId);
+                        MainSecretary mainSecretary = SqlMainSecretary.GetCompanyMainSecretary(companyId);
                         chancery = new Chancery(chanceryCompany)
                         {
                             Id = id,
@@ -137,7 +137,7 @@ namespace DocumentManagement
 
         public static void DeleteChancery(int id)
         {
-            string sqlExpression = "DELETE FROM Chancery WHERE Id = @id";
+            string sqlExpression = "UPDATE Chancery SET Deleted = 1 WHERE Id = @id";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();

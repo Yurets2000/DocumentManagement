@@ -7,14 +7,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Text.RegularExpressions;
 
 namespace DocumentManagement
 {
-    public class PersonForm : Form
+    public class SecretaryForm : Form
     {
-        public PersonForm()
+        public Person Person { get; private set; }
+        public int Salary { get; private set; }
+        public bool CorrectOnClose { get; private set; }
+
+        public SecretaryForm(Person person)
         {
+            Person = person;
             InitializeForm();
         }
 
@@ -22,8 +26,8 @@ namespace DocumentManagement
         {
             Width = 500;
             Height = 400;
-            Name = "PersonForm";
-            Text = "Person Form";
+            Name = "EmployeeForm";
+            Text = "Employee Form";
             BackColor = Color.GreenYellow;
             StartPosition = FormStartPosition.CenterScreen;
 
@@ -32,22 +36,24 @@ namespace DocumentManagement
                 Text = "Имя:"
             };
             name.SetBounds(10, 20, 80, 30);
-            TextBox nameBox = new TextBox
+
+            Label nameInfo = new Label
             {
-                Name = "nameBox"
+                Text = Person.Name
             };
-            nameBox.SetBounds(95, 20, 150, 30);
+            nameInfo.SetBounds(95, 20, 150, 30);
 
             Label surname = new Label
             {
                 Text = "Фамилия:"
             };
             surname.SetBounds(10, 55, 80, 30);
-            TextBox surnameBox = new TextBox
+
+            Label surnameInfo = new Label
             {
-                Name = "surnameBox"
+                Text = Person.Surname
             };
-            surnameBox.SetBounds(95, 55, 150, 30);
+            surnameInfo.SetBounds(95, 55, 150, 30);
 
             Label age = new Label
             {
@@ -55,12 +61,24 @@ namespace DocumentManagement
             };
             age.SetBounds(10, 90, 80, 30);
 
-            TextBox ageBox = new TextBox
+            Label ageInfo = new Label
             {
-                Name = "ageBox"
+                Text = Person.Age.ToString()
             };
-            ageBox.SetBounds(95, 90, 150, 30);
+            ageInfo.SetBounds(95, 90, 150, 30);
 
+            Label salary = new Label
+            {
+                Text = "Зарплата:"
+            };
+            salary.SetBounds(10, 125, 80, 30);
+
+            TextBox salaryBox = new TextBox
+            {
+                Name = "salaryBox"
+            };
+            salaryBox.SetBounds(95, 125, 150, 30);
+            
             Button commitButton = new Button
             {
                 Name = "commitButton",
@@ -68,16 +86,18 @@ namespace DocumentManagement
                 Font = new Font("Monotype Corsiva", 14.25F, FontStyle.Italic, GraphicsUnit.Point, ((byte)(204))),
                 Text = "Подтвердить"
             };
-            commitButton.SetBounds(10, 125, 235, 30);
+            commitButton.SetBounds(10, 150, 235, 30);
             commitButton.Click += new EventHandler(CommitButton_Click);
 
             Controls.Add(name);
-            Controls.Add(nameBox);
+            Controls.Add(nameInfo);
             Controls.Add(surname);
-            Controls.Add(surnameBox);
+            Controls.Add(surnameInfo);
             Controls.Add(age);
-            Controls.Add(ageBox);
+            Controls.Add(ageInfo);
             Controls.Add(commitButton);
+            Controls.Add(salary);
+            Controls.Add(salaryBox);
         }
 
         private void CommitButton_Click(object sender, EventArgs e)
@@ -85,30 +105,28 @@ namespace DocumentManagement
             bool filled = Utils.CheckFormFilled(this);
             if (filled)
             {
-                string name = Utils.FindControl(this, "nameBox").Text;
-                string surname = Utils.FindControl(this, "surnameBox").Text;
-                string ageString = Utils.FindControl(this, "ageBox").Text;
+                string salaryString = Utils.FindControl(this, "salaryBox").Text;
 
-                bool nameValidated = PersonFormValidator.ValidateName(name, surname);
-                bool ageValidated = PersonFormValidator.ValidateAge(ageString);
+                bool salaryValidated = SecretaryFormValidator.ValidateSalary(salaryString);
 
-                if (nameValidated && ageValidated)
+                if (salaryValidated)
                 {
-                    Person person = new Person(name, surname, int.Parse(ageString));
-                    person.Persist();
-                    DocumentManagementForm form = (DocumentManagementForm)Application.OpenForms["DocumentManagementForm"];
-                    form.UpdatePersonsBox();
+                    Salary = int.Parse(salaryString);
+
+                    CorrectOnClose = true;
                     Close();
                     Dispose();
                 }
                 else
                 {
-                    MessageBox.Show("Неправильно введенные данные!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Нерпавильно введенные данные!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    CorrectOnClose = false;
                 }
             }
             else
             {
                 MessageBox.Show("Одно из полей пустое!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                CorrectOnClose = false;
             }
         }
     }

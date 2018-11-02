@@ -11,7 +11,7 @@ namespace DocumentManagement
     {
         public static bool ValidateName(string name, string surname)
         {
-            string pattern = @"^\s*[А-Я][a-я]+\s*$";
+            string pattern = @"^*[А-Я][a-я]+$";
             Regex regex = new Regex(pattern);
             return regex.IsMatch(name) && regex.IsMatch(surname);
         }

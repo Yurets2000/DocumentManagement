@@ -9,14 +9,14 @@ using System.Data;
 
 namespace DocumentManagement
 {
-    public class SqlDocumentTypeDAO
+    public class SqlDocumentType
     {
         private static string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
         public static List<DocumentType> GetAllDocumentTypes()
         {
             List<DocumentType> documentTypes = new List<DocumentType>();
-            string sqlExpression = "SELECT * FROM DocumentType";
+            string sqlExpression = "SELECT * FROM DocumentType WHERE Deleted = 0";
             using(SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -42,7 +42,7 @@ namespace DocumentManagement
         public static DocumentType GetDocumentType(int id)
         {
             DocumentType documentType = null;
-            string sqlExpression = "SELECT * FROM DocumentType WHERE Id = @id";
+            string sqlExpression = "SELECT * FROM DocumentType WHERE Id = @id AND Deleted = 0";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -97,7 +97,7 @@ namespace DocumentManagement
 
         public static void DeleteDocumentType(int id)
         {
-            string sqlExpression = "DELETE FROM DocumentType WHERE Id = @id";
+            string sqlExpression = "UPDATE DocumentType SET Deleted = 1 WHERE Id = @id";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();

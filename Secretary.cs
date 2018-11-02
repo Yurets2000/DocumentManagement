@@ -10,46 +10,153 @@ namespace DocumentManagement
     {
         public bool InitSecretary { get; set; }
 
-        public List<Document> PendingDocuments { get; set; } = new List<Document>();
+        public List<Document> PendingDocuments { get; set; }
+        public List<Document> CreatedDocuments { get; set; }
         public Marker Marker { get; set; }
 
         public Secretary() : base() { }
 
         public Secretary(Person person, Company company, int salary) : base(person, company, salary) { }
 
-        public Document CreateDocument(DocumentType type, int documentCode, string title, string text, Company receiver)
+        public Document CreateDocument(DocumentType type, int documentCode, string title, string content, Company receiver)
         {
             Document document = new Document(type, documentCode, title)
             {
-                Sender = Company,
+                Text = content,
                 Receiver = receiver,
-                Text = text
+                Sender = Company
             };
-            int documentId = SqlDocumentDAO.AddDocument(document);
-            document.Id = documentId;
+            document.Persist();
+            SqlSecretaryCreatedDocuments.AddCreatedDocument(EmployeeId, document.Id);
+            CreatedDocuments.Add(document);
             return document;
         }
 
-        public void SendDocument(Document document)
+        public void SendCreatedDocument(Document document)
         {
-            Company receiver = document.Receiver;
-            SqlPendingDocumentsDAO.AddPendingDocument(receiver.CompanyChancery.Id, document.Id);
-            receiver.CompanyChancery.PendingDocuments.Add(document);
+            CreatedDocuments.Remove(document);
+            SqlSecretaryCreatedDocuments.DeleteCreatedDocument(EmployeeId, document.Id);
+            Director director = Company.Director;
+            SqlDirectorPendingDocuments.AddPendingDocument(director.EmployeeId, document.Id);
+            director.PendingDocuments.Add(document);
         }
 
-        public void SendDocumentToArchive(Document document)
+        public void SendPendingDocument(Document document)
         {
-            SqlArchiveDAO.AddArchivedDocument(Company.CompanyChancery.Id, document.Id);
-            Company.CompanyChancery.Archive.Add(document);
-        }
-
-        public void RemoveDocument(Document document)
-        {
-            SqlSecretaryPendingDocumentsDAO.DeletePendingDocument(EmployeeId, document.Id);
-            SqlDocumentDAO.DeleteDocument(document.Id);
             PendingDocuments.Remove(document);
+            SqlSecretaryPendingDocuments.DeletePendingDocument(EmployeeId, document.Id);
+            Director director = Company.Director;
+            SqlDirectorPendingDocuments.AddPendingDocument(director.EmployeeId, document.Id);
+            director.PendingDocuments.Add(document);
         }
 
-        public void UnderlineText(Document document, int offset, int length) { }
+        public void RemoveCreatedDocument(Document document)
+        {
+            SqlSecretaryCreatedDocuments.DeleteCreatedDocument(EmployeeId, document.Id);
+            CreatedDocuments.Remove(document);
+            document.Delete();
+            document = null;
+        }
+
+        public new void Persist()
+        {
+            int markerId = SqlMarker.AddMarker(Marker);
+            Marker.Id = markerId;
+            EmployeeId = SqlSecretary.AddSecretary(this);
+            SqlPerson.UpdatePerson(this);
+        }
+
+        public new void Update()
+        {
+            SqlSecretary.UpdateSecretary(this);
+        }
+
+        public static Secretary GetSecretary(int id)
+        {
+            return SqlSecretary.GetSecretary(id);
+        }
+
+        public void EditDocument(Document document)
+        {
+            document.Update();
+        }
+
+        public override void Quit()
+        {
+            //Удаляем созданные неотправленные документы
+            foreach (Document document in CreatedDocuments)
+            {
+                SqlSecretaryCreatedDocuments.DeleteCreatedDocument(EmployeeId, document.Id);
+                document.Delete();
+            }
+            CreatedDocuments = null;
+            //Направляем необработанные документы обратно в секретариат
+            Chancery chancery = Company.CompanyChancery;
+            foreach (Document document in PendingDocuments)
+            {
+                SqlSecretaryPendingDocuments.DeletePendingDocument(EmployeeId, document.Id);
+                SqlPendingDocuments.AddPendingDocument(chancery.Id, document.Id);
+            }
+            PendingDocuments = null;
+            //Удаляем маркер
+            SqlMarker.DeleteMarker(Marker.Id);
+            Marker = null;
+            Working = false;
+            SqlSecretary.DeleteSecretary(EmployeeId);
+            SqlPerson.UpdatePerson(this);
+        }
+
+        //Получить кол. всех созданных документов
+        public int GetCreatedDocumentsInfo()
+        {
+            List<DocumentInfo> createdDocumentsInfo = SqlSecretaryCreatedDocuments.GetCreatedDocumentsInfo(EmployeeId);
+            return createdDocumentsInfo.Count;
+        }
+
+        //Получить кол. всех созданных документов начиная от даты time
+        public int GetCreatedDocumentsInfo(DateTime time)
+        {
+            int count = 0;
+            List<DocumentInfo> createdDocumentsInfo = SqlSecretaryCreatedDocuments.GetCreatedDocumentsInfo(EmployeeId);
+            foreach(DocumentInfo documentInfo in createdDocumentsInfo)
+            {
+                if(documentInfo.Time.CompareTo(time) > 0)
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        //Получить кол. всех созданных документов данного типа
+        public int GetCreatedDocumentsInfo(DocumentType type)
+        {
+            int count = 0;
+            List<DocumentInfo> createdDocumentsInfo = SqlSecretaryCreatedDocuments.GetCreatedDocumentsInfo(EmployeeId);
+            foreach (DocumentInfo documentInfo in createdDocumentsInfo)
+            {
+                if (documentInfo.Type.Equals(type))
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        //Получить кол. всех созданных документов данного типа начиная от даты time
+        public int GetCreatedDocumentsInfo(DocumentType type, DateTime time)
+        {
+            int count = 0;
+            List<DocumentInfo> createdDocumentsInfo = SqlSecretaryCreatedDocuments.GetCreatedDocumentsInfo(EmployeeId);
+            foreach (DocumentInfo documentInfo in createdDocumentsInfo)
+            {
+                if (documentInfo.Type.Equals(type) && documentInfo.Time.CompareTo(time) > 0)
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+
     }
 }

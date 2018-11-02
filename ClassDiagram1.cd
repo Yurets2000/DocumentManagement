@@ -3,14 +3,14 @@
   <Class Name="DocumentManagement.DocumentManagementForm">
     <Position X="7.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>BEAABgAAACAAAQAAQACAACgCAEiABAECACAABAAAAEA=</HashCode>
+      <HashCode>BEAABgAAACAAAQAAQACAACgCAEiABAACACAABAAAAEA=</HashCode>
       <FileName>DocumentManagementForm.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DocumentManagement.PersonForm">
     <Position X="0.5" Y="0.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAgAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>PersonForm.cs</FileName>
       <NewMemberFileName>DocumentManagementForm.cs</NewMemberFileName>
     </TypeIdentifier>
@@ -23,9 +23,9 @@
     </TypeIdentifier>
   </Class>
   <Class Name="DocumentManagement.ChanceryInfoForm">
-    <Position X="9.75" Y="0.75" Width="1.5" />
+    <Position X="10.5" Y="10.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAARACgAAQAAAgACAEEkIAIQQIgAgACAAAAGAAAA=</HashCode>
+      <HashCode>AAAAAARACgAAQAAAigCAEEkIAIQQIgAgACAAAAGAAAA=</HashCode>
       <FileName>ChanceryInfoForm.cs</FileName>
       <NewMemberFileName>DocumentManagementForm.cs</NewMemberFileName>
     </TypeIdentifier>
@@ -36,7 +36,7 @@
   <Class Name="DocumentManagement.DocumentForm">
     <Position X="5.75" Y="0.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAgAgAEAAAAAAAAgAAAAEAAAAAQAAAQAIAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAgAQAAAAAAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DocumentForm.cs</FileName>
       <NewMemberFileName>DocumentManagementForm.cs</NewMemberFileName>
     </TypeIdentifier>
@@ -44,7 +44,7 @@
   <Class Name="DocumentManagement.Utils">
     <Position X="1" Y="7.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAgAAAAAAAAAAAAAAAQAAAAA=</HashCode>
       <FileName>Utils.cs</FileName>
       <NewMemberFileName>DocumentManagementForm.cs</NewMemberFileName>
     </TypeIdentifier>
@@ -68,7 +68,7 @@
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>RAACAAEAAAAAAEBEAAAAAAAAAAAEAAAAAQAACQAIAAA=</HashCode>
+      <HashCode>RAASAAEAgAAAAEBEAAAAAAAAAAAEAAAAAQAACQAIAAA=</HashCode>
       <FileName>Document.cs</FileName>
       <NewMemberFileName>DocumentManagementForm.cs</NewMemberFileName>
     </TypeIdentifier>
@@ -81,7 +81,7 @@
   <Class Name="DocumentManagement.DocumentType">
     <Position X="2.5" Y="16" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAAEAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <HashCode>AAACAAAAAAAAAAAEAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DocumentType.cs</FileName>
       <NewMemberFileName>DocumentManagementForm.cs</NewMemberFileName>
     </TypeIdentifier>
@@ -91,8 +91,6 @@
     <AssociationLine Name="PendingDocuments" Type="DocumentManagement.Document" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="9.5" Y="6.625" />
-        <Point X="8.302" Y="6.625" Type="JumpStart" />
-        <Point X="8.136" Y="6.625" Type="JumpEnd" />
         <Point X="6.5" Y="6.625" />
         <Point X="6.5" Y="16" />
       </Path>
@@ -100,8 +98,6 @@
     <AssociationLine Name="Secretaries" Type="DocumentManagement.Secretary" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="9.5" Y="6.812" />
-        <Point X="8.302" Y="6.812" Type="JumpStart" />
-        <Point X="8.136" Y="6.812" Type="JumpEnd" />
         <Point X="7.335" Y="6.812" />
         <Point X="7.335" Y="15.706" />
         <Point X="8.5" Y="15.706" />
@@ -120,7 +116,7 @@
   <Class Name="DocumentManagement.Secretary">
     <Position X="8.5" Y="14.75" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAIAAAAAgAAAAAAAAACAQAAQAAAAAAAABAAAAAAAAA=</HashCode>
+      <HashCode>AgAIAAAAAkAAAAAAgAACAQAAQAAAAAABAAAAAAAAAAA=</HashCode>
       <FileName>Secretary.cs</FileName>
       <NewMemberFileName>DocumentManagementForm.cs</NewMemberFileName>
     </TypeIdentifier>
@@ -158,18 +154,6 @@
       <Property Name="CompanyChancery" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="DocumentManagement.DictionaryCompanyDAO" BaseTypeListCollapsed="true">
-    <Position X="3" Y="8.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAgAAAAAAAAAgAAAAAAACAABAAQBAACEAAAAAAAAAA=</HashCode>
-      <FileName>DictionaryCompanyDAO.cs</FileName>
-      <NewMemberFileName>DocumentManagementForm.cs</NewMemberFileName>
-    </TypeIdentifier>
-    <ShowAsCollectionAssociation>
-      <Field Name="companies" />
-    </ShowAsCollectionAssociation>
-    <Lollipop Position="0.2" />
-  </Class>
   <Class Name="DocumentManagement.Program" Collapsed="true">
     <Position X="16" Y="8" Width="1.5" />
     <TypeIdentifier>
@@ -200,26 +184,6 @@
       <Field Name="document" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="DocumentManagement.EmployeeForm">
-    <Position X="2.25" Y="0.75" Width="1.5" />
-    <AssociationLine Name="Person" Type="DocumentManagement.Person" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="2.875" Y="3.011" />
-        <Point X="2.875" Y="3.838" />
-        <Point X="7.25" Y="3.838" />
-        <Point X="7.25" Y="6.281" />
-        <Point X="8.219" Y="6.281" />
-        <Point X="8.219" Y="8.5" />
-      </Path>
-    </AssociationLine>
-    <TypeIdentifier>
-      <HashCode>AIAAACAAAAAgAAAAAAAAAAgAAAAAAAAAAAAAAAAIAAA=</HashCode>
-      <FileName>EmployeeForm.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="Person" />
-    </ShowAsAssociation>
-  </Class>
   <Class Name="DocumentManagement.CompanyInfoForm">
     <Position X="13.25" Y="0.75" Width="1.5" />
     <TypeIdentifier>
@@ -231,9 +195,9 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="DocumentManagement.SecretaryInfoForm">
-    <Position X="16.75" Y="0.75" Width="1.5" />
+    <Position X="16" Y="9.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAQAAAAQAABAAAAAgAAAAAAABAAIAAEBAAAAA=</HashCode>
+      <HashCode>AAAAAAAAEAAAAQgQAAAAAAgAAACAAAgAEBBAABAAAIA=</HashCode>
       <FileName>SecretaryInfoForm.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -241,7 +205,7 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="DocumentManagement.Marker">
-    <Position X="12" Y="14" Width="1.5" />
+    <Position X="12.5" Y="12.25" Width="1.5" />
     <NestedTypes>
       <Enum Name="DocumentManagement.Marker.Color" Collapsed="true">
         <TypeIdentifier>
@@ -250,32 +214,14 @@
       </Enum>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAgAAAAAACAAAAAAAA=</HashCode>
+      <HashCode>AAACAAAAAAAgAAAAAAAAAAAAAAAAAAAAAACAAAAAAAA=</HashCode>
       <FileName>Marker.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="DocumentManagement.IdGenerator">
-    <Position X="1" Y="6" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
-      <FileName>IdGenerator.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="DocumentManagement.DictionaryPersonDAO" BaseTypeListCollapsed="true">
-    <Position X="4.75" Y="8.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAgBAAAAAAAAAAAAAAAAAAABACAgAAAAQAAAAAAAEA=</HashCode>
-      <FileName>DictionaryPersonDAO.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsCollectionAssociation>
-      <Field Name="persons" />
-    </ShowAsCollectionAssociation>
-    <Lollipop Position="0.221" />
   </Class>
   <Class Name="DocumentManagement.CompanyForm">
     <Position X="4" Y="0.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAQABAAAAAAgAgAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAQAAAEEAAAAAgAAAAAAAAAAAAAQAAAAAA=</HashCode>
       <FileName>CompanyForm.cs</FileName>
       <NewMemberFileName>DocumentManagementForm.cs</NewMemberFileName>
     </TypeIdentifier>
@@ -286,11 +232,15 @@
       <Path>
         <Point X="12.188" Y="2.944" />
         <Point X="12.188" Y="9.316" />
+        <Point X="10.833" Y="9.316" Type="JumpStart" />
+        <Point X="10.667" Y="9.316" Type="JumpEnd" />
+        <Point X="9.583" Y="9.316" Type="JumpStart" />
+        <Point X="9.417" Y="9.316" Type="JumpEnd" />
         <Point X="9.25" Y="9.316" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAgAAAAAAgAAAgAAAgAEAAAAACAAAA=</HashCode>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAAgAAAAAAAgAEEAAAACAAAA=</HashCode>
       <FileName>PersonInfoForm.cs</FileName>
       <NewMemberFileName>DocumentManagementForm.cs</NewMemberFileName>
     </TypeIdentifier>
@@ -298,20 +248,243 @@
       <Field Name="person" />
     </ShowAsAssociation>
   </Class>
-  <Interface Name="DocumentManagement.ICompanyDAO">
-    <Position X="3" Y="6" Width="1.5" />
+  <Class Name="DocumentManagement.CompanyFormValidator" Collapsed="true">
+    <Position X="18.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAAAAQBAACEAAAAAAAAAA=</HashCode>
-      <FileName>ICompanyDAO.cs</FileName>
-      <NewMemberFileName>DocumentManagementForm.cs</NewMemberFileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAgAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>CompanyFormValidator.cs</FileName>
     </TypeIdentifier>
-  </Interface>
-  <Interface Name="DocumentManagement.IPersonDAO">
-    <Position X="4.75" Y="6" Width="1.5" />
+  </Class>
+  <Class Name="DocumentManagement.CompanyType" Collapsed="true">
+    <Position X="20" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAACAgAAAAAAAAAAAAEA=</HashCode>
-      <FileName>IPersonDAO.cs</FileName>
+      <HashCode>AAACAAAAAAAAAAAEAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CompanyType.cs</FileName>
     </TypeIdentifier>
-  </Interface>
+  </Class>
+  <Class Name="DocumentManagement.CrudChancery" Collapsed="true">
+    <Position X="21.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAQAAAAAAAAAAAAAAAAAgAAAAAAECAA=</HashCode>
+      <FileName>CrudChancery.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.CrudCompany" Collapsed="true">
+    <Position X="23.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAAAAAAAAAAAAAAAAEARAAEAAAAAAA=</HashCode>
+      <FileName>CrudCompany.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.CrudDirector" Collapsed="true">
+    <Position X="25.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAQAAAACAAAAEAAAAQA=</HashCode>
+      <FileName>CrudDirector.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.CrudDocument" Collapsed="true">
+    <Position X="27" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAgAAEAAAAAAAAEAAAAAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>CrudDocument.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.CrudMainSecretary" Collapsed="true">
+    <Position X="18.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAEAAAAAAAAAAAAgAAAAAAQAAAAAAAAAAIAAAAAAAA=</HashCode>
+      <FileName>CrudMainSecretary.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.CrudPerson" Collapsed="true">
+    <Position X="20" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAAAAAAAAQAQAAAAAAAAAAAAAiAAAA=</HashCode>
+      <FileName>CrudPerson.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.CrudSecretary" Collapsed="true">
+    <Position X="21.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAABAAAAAEAAAAAAAAAAgAAgAAAAAAAA=</HashCode>
+      <FileName>CrudSecretary.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.Director" Collapsed="true">
+    <Position X="2" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAACAgAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAE=</HashCode>
+      <FileName>Director.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.DirectorForm" Collapsed="true">
+    <Position X="23.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIEAACAAAAAAAAAAAAAAAAgAAAAAAAAgAAAAAAAAAAE=</HashCode>
+      <FileName>DirectorForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.DirectorFormValidator" Collapsed="true">
+    <Position X="25.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DirectorFormValidator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.DirectorInfoForm" Collapsed="true">
+    <Position X="27" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAQAAAgAAAAAAgAAAgAAAgAEAAAAAAAAAA=</HashCode>
+      <FileName>DirectorInfoForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.DocumentFormValidator" Collapsed="true">
+    <Position X="18.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DocumentFormValidator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.MainSecretary" Collapsed="true">
+    <Position X="10.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAhAAAAAAAAA=</HashCode>
+      <FileName>MainSecretary.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.PersonFormValidator" Collapsed="true">
+    <Position X="20" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAACAAAAAAAA=</HashCode>
+      <FileName>PersonFormValidator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.SecretaryForm" Collapsed="true">
+    <Position X="21.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIEAACAAAAAAAAAAAAAAAAgAAAAAAAAgAAAAAAAAAAA=</HashCode>
+      <FileName>SecretaryForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.SecretaryFormValidator" Collapsed="true">
+    <Position X="23.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SecretaryFormValidator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.SignatureBox" Collapsed="true">
+    <Position X="25.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAACAAAAAAgAAAAAAABAAAgABABgAAAAAAQ=</HashCode>
+      <FileName>SignatureBox.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.SqlArchive" Collapsed="true">
+    <Position X="27" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAQAAAIAAAA=</HashCode>
+      <FileName>SqlArchive.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.SqlChancery" Collapsed="true">
+    <Position X="18.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACgAAAACAAAAAgAAAAAAAAAAABAAAAAgAAAAAAAAAA=</HashCode>
+      <FileName>SqlChancery.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.SqlCompany" Collapsed="true">
+    <Position X="20" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAgAAAAAAAAAAAAAAAECUAAAAAAAAAA=</HashCode>
+      <FileName>SqlCompany.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.SqlCompanyType" Collapsed="true">
+    <Position X="21.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAEAACgAAAAAAAAACAAAAAAAABAAAAAAAIA=</HashCode>
+      <FileName>SqlCompanyType.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.SqlDirector" Collapsed="true">
+    <Position X="23.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAgAgAAAAAAAAABAQAAAEAEAAAEAAAAAA=</HashCode>
+      <FileName>SqlDirector.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.SqlDirectorPendingDocuments" Collapsed="true">
+    <Position X="25.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAAAAAAgYAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SqlDirectorPendingDocuments.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.SqlDocument" Collapsed="true">
+    <Position X="27" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAgAAgAAAAAAAAAAAAAAAAAAggAAAAABAA=</HashCode>
+      <FileName>SqlDocument.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.SqlDocumentType" Collapsed="true">
+    <Position X="18.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAEAQgQAAAAAAAAAAhAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SqlDocumentType.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.SqlMainSecretary" Collapsed="true">
+    <Position X="20" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EACEAAAAAAAAAAgAAAAAAAQAAAYAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>SqlMainSecretary.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.SqlMarker" Collapsed="true">
+    <Position X="21.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAAAECAAAAAAAAAAAAAAAAQAAAAA=</HashCode>
+      <FileName>SqlMarker.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.SqlPendingDocuments" Collapsed="true">
+    <Position X="23.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAAAAAAgYAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SqlPendingDocuments.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.SqlPerson" Collapsed="true">
+    <Position X="25.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAgAAAAAAAAAAAAAoAAAAAAAAAgAAEA=</HashCode>
+      <FileName>SqlPerson.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.SqlSecretary" Collapsed="true">
+    <Position X="27" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAASAAAAhAAAAAABAAAACAAAAgAAAAAAAAAAA=</HashCode>
+      <FileName>SqlSecretary.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.SqlSecretaryCreatedDocuments" Collapsed="true">
+    <Position X="18.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAAAAAAAAABAAAAAIAEAAAAAAAAA=</HashCode>
+      <FileName>SqlSecretaryCreatedDocuments.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentManagement.SqlSecretaryPendingDocuments" Collapsed="true">
+    <Position X="20" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAAAAAAgYAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SqlSecretaryPendingDocuments.cs</FileName>
+    </TypeIdentifier>
+  </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

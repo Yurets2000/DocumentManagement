@@ -59,16 +59,30 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="CompanyType.cs" />
-    <Compile Include="DictionaryCompanyDAO.cs" />
-    <Compile Include="DictionaryPersonDAO.cs" />
+    <Compile Include="CrudChancery.cs" />
+    <Compile Include="CrudCompany.cs" />
+    <Compile Include="CrudDirector.cs" />
+    <Compile Include="CrudDocument.cs" />
+    <Compile Include="CrudMainSecretary.cs" />
+    <Compile Include="CrudPerson.cs" />
+    <Compile Include="CrudSecretary.cs" />
     <Compile Include="Director.cs" />
+    <Compile Include="DirectorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DirectorFormValidator.cs" />
     <Compile Include="DirectorInfoForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Document.cs" />
+    <Compile Include="DocumentEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="DocumentForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="DocumentFormValidator.cs" />
+    <Compile Include="DocumentInfo.cs" />
     <Compile Include="DocumentInfoForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -80,19 +94,19 @@
     </Compile>
     <Compile Include="DocumentType.cs" />
     <Compile Include="Employee.cs" />
-    <Compile Include="EmployeeForm.cs">
+    <Compile Include="MainSecretaryInfoForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EmployeeFormValidator.cs" />
+    <Compile Include="SecretaryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SecretaryFormValidator.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="ICompanyDAO.cs" />
-    <Compile Include="IdGenerator.cs" />
-    <Compile Include="IPersonDAO.cs" />
     <Compile Include="MainSecretary.cs" />
     <Compile Include="Marker.cs" />
     <Compile Include="Person.cs" />
@@ -109,19 +123,24 @@
     <Compile Include="SecretaryInfoForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SqlArchiveDAO.cs" />
-    <Compile Include="SqlChanceryDAO.cs" />
-    <Compile Include="SqlCompanyDAO.cs" />
-    <Compile Include="SqlCompanyTypeDAO.cs" />
-    <Compile Include="SqlDirectorDAO.cs" />
-    <Compile Include="SqlDocumentDAO.cs" />
-    <Compile Include="SqlDocumentTypeDAO.cs" />
-    <Compile Include="SqlMainSecretaryDAO.cs" />
-    <Compile Include="SqlMarkerDAO.cs" />
-    <Compile Include="SqlPendingDocumentsDAO.cs" />
-    <Compile Include="SqlPersonDAO.cs" />
-    <Compile Include="SqlSecretaryDAO.cs" />
-    <Compile Include="SqlSecretaryPendingDocumentsDAO.cs" />
+    <Compile Include="SignatureBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SqlArchive.cs" />
+    <Compile Include="SqlChancery.cs" />
+    <Compile Include="SqlCompany.cs" />
+    <Compile Include="SqlCompanyType.cs" />
+    <Compile Include="SqlDirector.cs" />
+    <Compile Include="SqlDirectorPendingDocuments.cs" />
+    <Compile Include="SqlDocument.cs" />
+    <Compile Include="SqlDocumentType.cs" />
+    <Compile Include="SqlMainSecretary.cs" />
+    <Compile Include="SqlMarker.cs" />
+    <Compile Include="SqlPendingDocuments.cs" />
+    <Compile Include="SqlPerson.cs" />
+    <Compile Include="SqlSecretaryCreatedDocuments.cs" />
+    <Compile Include="SqlSecretary.cs" />
+    <Compile Include="SqlSecretaryPendingDocuments.cs" />
     <Compile Include="Utils.cs" />
     <EmbeddedResource Include="DocumentManagementForm.resx">
       <DependentUpon>DocumentManagementForm.cs</DependentUpon>

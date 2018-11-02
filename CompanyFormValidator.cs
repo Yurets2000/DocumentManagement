@@ -12,18 +12,14 @@ namespace DocumentManagement
 
         public static bool ValidateName(string name)
         {
-            string pattern = @"^\s*([A-Z][a-z]+[\s?(\.\s)])+\s*$?";
+            string pattern = @"^([A-Za-z]+[\s(\.\s)]?)+$";
             Regex regex = new Regex(pattern);
             return regex.IsMatch(name);
         }
 
         public static bool ValidateAddress(string address)
         {
-            //          string pattern = @"^\s*город [А-Я][а-я]+\,
-            //                   \s(ул\.|пер\.)
-            //                  \s[А-Я][а-я]+\,
-            //                  \s(\d+)?\s*$";
-            string pattern = @"^\s*город [А-Я][а-я]+\s*$";
+            string pattern = @"^город [А-Я][а-я]+, (ул\.|пер\.) [А-Я][а-я]+$";
             Regex regex = new Regex(pattern);
             return regex.IsMatch(address);
         }

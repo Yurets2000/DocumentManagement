@@ -17,71 +17,7 @@ namespace DocumentManagement
 
         private Company _chanceryCompany;
         private MainSecretary _mainSecretary;
-        /*
-        private List<Document> _archive;
-        private List<Document> _pendingDocuments;
-        private List<Secretary> _secretaries;
         
-        public List<Document> Archive
-        {
-            get
-            {
-                if (Id <= 0)
-                {
-                    throw new Exception("Chancery Id <= 0");
-                }
-                else
-                {
-                    _archive = SqlArchiveDAO.GetArchivedDocuments(Id); 
-                }
-                return _archive;
-            }
-            set
-            {
-                _archive = value;
-            }
-        }
-
-        public List<Document> PendingDocuments
-        {
-            get
-            {
-                if (Id <= 0)
-                {
-                    throw new Exception("Chancery Id <= 0");
-                }
-                else
-                {
-                    _pendingDocuments = SqlPendingDocumentsDAO.GetPendingDocuments(Id);
-                }
-                return _pendingDocuments;
-            }
-            set
-            {
-                _pendingDocuments = value;
-            }
-        }
-
-        public List<Secretary> Secretaries
-        {
-            get
-            {
-                if(_chanceryCompany != null && _chanceryCompany.Id <= 0)
-                {
-                    throw new Exception("Chancery Id <= 0");
-                }
-                else
-                {
-                    _secretaries = SqlSecretaryDAO.GetCompanySecretaries(_chanceryCompany.Id);
-                }
-                return _secretaries;
-            }
-            set
-            {
-                _secretaries = value;
-            }
-        }
-        */
         public Company ChanceryCompany
         {
             get
@@ -94,7 +30,7 @@ namespace DocumentManagement
                     }
                     else
                     {
-                        _chanceryCompany = SqlCompanyDAO.GetCompany(_chanceryCompany.Id);
+                        _chanceryCompany = SqlCompany.GetCompany(_chanceryCompany.Id);
                     }
                 }
                 return _chanceryCompany;
@@ -116,7 +52,7 @@ namespace DocumentManagement
                     }
                     else
                     {
-                        _mainSecretary = SqlMainSecretaryDAO.GetMainSecretary(_mainSecretary.EmployeeId);
+                        _mainSecretary = SqlMainSecretary.GetMainSecretary(_mainSecretary.EmployeeId);
                     }
                 }
                 return _mainSecretary;
@@ -132,6 +68,66 @@ namespace DocumentManagement
         public Chancery(Company chanceryCompany)
         {
             ChanceryCompany = chanceryCompany;
+        }
+
+        public void Persist()
+        {
+            Id = SqlChancery.AddChancery(this);
+        }
+
+        public static Chancery GetChancery(int Id)
+        {
+            return SqlChancery.GetChancery(Id);
+        }
+
+        public void Update()
+        {
+            SqlChancery.UpdateChancery(this);
+        }
+
+        public void Delete()
+        {
+            //Удаляем всех секретарей из секретариата
+            foreach (Secretary secretary in Secretaries)
+            {
+                secretary.Quit();
+            }
+            Secretaries = null;
+            //Удаляем главного секретаря
+            if (MainSecretary != null)
+            {
+                MainSecretary.Quit();
+                MainSecretary = null;
+            }
+            //Удаляем необработанные документы
+            foreach (Document document in PendingDocuments)
+            {
+                SqlPendingDocuments.DeletePendingDocument(Id, document.Id);
+                document.Delete();
+            }
+            PendingDocuments = null;
+            //Удаляем архив
+            foreach (Document document in Archive)
+            {
+                SqlArchive.DeleteArchivedDocument(Id, document.Id);
+                document.Delete();
+            }
+            Archive = null;
+            SqlChancery.DeleteChancery(Id);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+            Chancery chancery = (Chancery)obj;
+            if (chancery.Id <= 0 || Id <= 0)
+            {
+                return false;
+            }
+            return Id == chancery.Id;
         }
     }
 }

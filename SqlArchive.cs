@@ -9,14 +9,14 @@ using System.Data;
 
 namespace DocumentManagement
 {
-    public class SqlPendingDocumentsDAO
+    public class SqlArchive
     {
         private static string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
-        public static List<Document> GetPendingDocuments(int chanceryId)
+        public static List<Document> GetArchivedDocuments(int chanceryId)
         {
             List<Document> documents = new List<Document>();
-            string sqlExpression = "SELECT * FROM PendingDocuments WHERE ChanceryId = @chanceryId";
+            string sqlExpression = "SELECT * FROM Archive WHERE ChanceryId = @chanceryId AND Deleted = 0";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -29,7 +29,7 @@ namespace DocumentManagement
                     while (reader.Read())
                     {
                         int documentId = (int)reader["DocumentId"];
-                        Document document = SqlDocumentDAO.GetDocument(documentId);
+                        Document document = SqlDocument.GetDocument(documentId);
                         documents.Add(document);
                     }
                 }
@@ -37,9 +37,9 @@ namespace DocumentManagement
             return documents;
         }
 
-        public static void AddPendingDocument(int chanceryId, int documentId)
+        public static void AddArchivedDocument(int chanceryId, int documentId)
         {
-            string sqlExpression = "INSERT INTO PendingDocuments(ChanceryId, DocumentId) VALUES (@chanceryId, @documentId)";
+            string sqlExpression = "INSERT INTO Archive(ChanceryId, DocumentId) VALUES (@chanceryId, @documentId)";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -52,9 +52,9 @@ namespace DocumentManagement
             }
         }
 
-        public static void DeletePendingDocument(int chanceryId, int documentId)
+        public static void DeleteArchivedDocument(int chanceryId, int documentId)
         {
-            string sqlExpression = "DELETE FROM PendingDocuments WHERE ChanceryId = @chanceryId AND DocumentId = @documentId";
+            string sqlExpression = "UPDATE Archive SET Deleted = 1 WHERE ChanceryId = @chanceryId AND DocumentId = @documentId";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();

@@ -9,14 +9,14 @@ using System.Data;
 
 namespace DocumentManagement
 {
-    public class SqlDocumentDAO
+    public class SqlDocument
     {
         private static string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
         public static List<Document> GetAllDocuments()
         {
             List<Document> documents = new List<Document>();
-            string sqlExpression = "SELECT * FROM Document";
+            string sqlExpression = "SELECT * FROM Document WHERE Deleted = 0";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -27,18 +27,23 @@ namespace DocumentManagement
                     while (reader.Read())
                     {
                         int id = (int)reader["Id"];
-                        DocumentType type = new DocumentType((string)reader["DocumentTypeName"]);
+                        int documentTypeId = (int)reader["DocumentTypeId"];
+                        DocumentType type = SqlDocumentType.GetDocumentType(documentTypeId);
                         int documentCode = (int)reader["DocumentCode"];
                         string title = (string)reader["Title"];
                         string content = (string)reader["Content"];
                         DateTime creationDate = (DateTime)reader["CreationDate"];
-                        Company receiver = SqlCompanyDAO.GetCompany((int)reader["ReceiverId"]);
-                        Company sender = SqlCompanyDAO.GetCompany((int)reader["SenderId"]);
+                        bool senderConfirm = (bool)reader["SenderConfirm"];
+                        bool receiverConfirm = (bool)reader["ReceiverCofirm"];
+                        Company receiver = SqlCompany.GetCompany((int)reader["ReceiverId"]);
+                        Company sender = SqlCompany.GetCompany((int)reader["SenderId"]);
                         Document document = new Document(type, documentCode, title)
                         {
                             Id = id,
                             Text = content,
                             CreationDate = creationDate,
+                            ReceiverConfirm = receiverConfirm,
+                            SenderConfirm = senderConfirm,
                             Receiver = receiver,
                             Sender = sender
                         };
@@ -52,7 +57,7 @@ namespace DocumentManagement
         public static Document GetDocument(int id)
         {
             Document document = null;
-            string sqlExpression = "SELECT * FROM Document WHERE Id = @id";
+            string sqlExpression = "SELECT * FROM Document WHERE Id = @id AND Deleted = 0";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -64,18 +69,23 @@ namespace DocumentManagement
                 {
                     while (reader.Read())
                     {
-                        DocumentType type = new DocumentType((string)reader["DocumentTypeName"]);
+                        int documentTypeId = (int)reader["DocumentTypeId"];
+                        DocumentType type = SqlDocumentType.GetDocumentType(documentTypeId);
                         int documentCode = (int)reader["DocumentCode"];
                         string title = (string)reader["Title"];
-                        string content = (string)reader["Content"];
+                        string content = reader["Content"].GetType() == typeof(DBNull) ? null : (string)reader["Content"];
                         DateTime creationDate = (DateTime)reader["CreationDate"];
-                        Company receiver = SqlCompanyDAO.GetCompany((int)reader["ReceiverId"]);
-                        Company sender = SqlCompanyDAO.GetCompany((int)reader["SenderId"]);
+                        bool senderConfirm = (bool)reader["SenderConfirm"];
+                        bool receiverConfirm = (bool)reader["ReceiverConfirm"];
+                        Company receiver = SqlCompany.GetCompany((int)reader["ReceiverId"]);
+                        Company sender = SqlCompany.GetCompany((int)reader["SenderId"]);
                         document = new Document(type, documentCode, title)
                         {
                             Id = id,
                             Text = content,
                             CreationDate = creationDate,
+                            ReceiverConfirm = receiverConfirm,
+                            SenderConfirm = senderConfirm,
                             Receiver = receiver,
                             Sender = sender
                         };
@@ -101,11 +111,18 @@ namespace DocumentManagement
                 command.Parameters.Add("@receiverId", SqlDbType.Int);
                 command.Parameters.Add("@senderId", SqlDbType.Int);
 
-                command.Parameters["@documentTypeId"].Value = SqlDocumentTypeDAO.GetDocumentType(document.Type.Id);
                 command.Parameters["@documentCode"].Value = document.DocumentCode;
                 command.Parameters["@title"].Value = document.Title;
                 command.Parameters["@content"].Value = document.Text;
                 command.Parameters["@creationDate"].Value = document.CreationDate;
+                if(document.Type == null)
+                {
+                    command.Parameters["@documentTypeId"].Value = DBNull.Value;
+                }
+                else
+                {
+                    command.Parameters["@documentTypeId"].Value = document.Type.Id;
+                }
                 if(document.Receiver == null)
                 {
                     command.Parameters["@receiverId"].Value = DBNull.Value;
@@ -129,7 +146,7 @@ namespace DocumentManagement
 
         public static void UpdateDocument(Document document)
         {
-            string sqlExpression = "UPDATE Document SET DocumentTypeName = @documentTypeName, DocumentCode = @documentCode, Title = @title, Content = @content, CreationDate = @creationDate, ReceiverId = @receiverId, SenderId = @senderId WHERE Id = @id)";
+            string sqlExpression = "UPDATE Document SET DocumentTypeId = @documentTypeId, DocumentCode = @documentCode, Title = @title, Content = @content, CreationDate = @creationDate, SenderConfirm = @senderConfirm, ReceiverConfirm = @receiverConfirm, ReceiverId = @receiverId, SenderId = @senderId WHERE Id = @id";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -140,14 +157,25 @@ namespace DocumentManagement
                 command.Parameters.Add("@content", SqlDbType.Text);
                 command.Parameters.Add("@creationDate", SqlDbType.Date);
                 command.Parameters.Add("@receiverId", SqlDbType.Int);
+                command.Parameters.Add("@senderConfirm", SqlDbType.Bit);
+                command.Parameters.Add("@receiverConfirm", SqlDbType.Bit);
                 command.Parameters.Add("@senderId", SqlDbType.Int);
                 command.Parameters.Add("@id", SqlDbType.Int);
 
-                command.Parameters["@documentTypeId"].Value = SqlDocumentTypeDAO.GetDocumentType(document.Type.Id);
                 command.Parameters["@documentCode"].Value = document.DocumentCode;
                 command.Parameters["@title"].Value = document.Title;
                 command.Parameters["@content"].Value = document.Text;
                 command.Parameters["@creationDate"].Value = document.CreationDate;
+                command.Parameters["@senderConfirm"].Value = document.SenderConfirm;
+                command.Parameters["@receiverConfirm"].Value = document.ReceiverConfirm;
+                if (document.Type == null)
+                {
+                    command.Parameters["@documentTypeId"].Value = DBNull.Value;
+                }
+                else
+                {
+                    command.Parameters["@documentTypeId"].Value = document.Type.Id;
+                }
                 if (document.Receiver == null)
                 {
                     command.Parameters["@receiverId"].Value = DBNull.Value;
@@ -171,7 +199,7 @@ namespace DocumentManagement
 
         public static void DeleteDocument(int id)
         {
-            string sqlExpression = "DELETE FROM Document WHERE Id = @id";
+            string sqlExpression = "UPDATE Document SET Deleted = 1 WHERE Id = @id";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();

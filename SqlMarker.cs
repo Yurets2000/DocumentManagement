@@ -11,14 +11,14 @@ namespace DocumentManagement
 {
 
 
-    public class SqlMarkerDAO
+    public class SqlMarker
     {
         private static string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
         public static Marker GetMarker(int id)
         {
             Marker marker = null;
-            string sqlExpression = "SELECT * FROM Marker WHERE Id = @id";
+            string sqlExpression = "SELECT * FROM Marker WHERE Id = @id AND Deleted = 0";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -58,7 +58,7 @@ namespace DocumentManagement
 
         public static void DeleteMarker(int id)
         {
-            string sqlExpression = "DELETE FROM Marker WHERE Id = @id";
+            string sqlExpression = "UPDATE Marker SET Deleted = 1 WHERE Id = @id";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();

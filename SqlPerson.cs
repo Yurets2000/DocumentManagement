@@ -9,14 +9,14 @@ using System.Data;
 
 namespace DocumentManagement
 {
-    public class SqlPersonDAO
+    public class SqlPerson
     {
         private static string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
         public static List<Person> GetAllPersons()
         {
             List<Person> persons = new List<Person>();
-            string sqlExpression = "SELECT * FROM Person";
+            string sqlExpression = "SELECT * FROM Person WHERE Deleted = 0";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -46,7 +46,7 @@ namespace DocumentManagement
         public static Person GetPerson(int id)
         {
             Person person = null;
-            string sqlExpression = "SELECT * FROM Person WHERE Id = @id";
+            string sqlExpression = "SELECT * FROM Person WHERE Id = @id AND Deleted = 0";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -119,7 +119,7 @@ namespace DocumentManagement
 
         public static void DeletePerson(int id)
         {
-            string sqlExpression = "DELETE FROM Person WHERE Id = @id";
+            string sqlExpression = "UPDATE Person SET Deleted = 1 WHERE Id = @id";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();

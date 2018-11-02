@@ -25,7 +25,7 @@ namespace DocumentManagement
                     }
                     else
                     {
-                        _company = SqlCompanyDAO.GetCompany(_company.Id);
+                        _company = SqlCompany.GetCompany(_company.Id);
                         _company.InitCompany = false;
                     }
                 }
@@ -47,5 +47,20 @@ namespace DocumentManagement
             Salary = salary;
         }
 
+        public abstract void Quit();
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+            Employee employee = (Employee)obj;
+            if (employee.EmployeeId <= 0 || EmployeeId <= 0)
+            {
+                return false;
+            }
+            return EmployeeId == employee.EmployeeId;
+        }
     }
 }

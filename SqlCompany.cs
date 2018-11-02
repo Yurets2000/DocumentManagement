@@ -9,14 +9,14 @@ using System.Data;
 
 namespace DocumentManagement
 {
-    public class SqlCompanyDAO
+    public class SqlCompany
     {
         private static string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
         public static List<Company> GetAllCompanies()
         {
             List<Company> companies = new List<Company>();
-            string sqlExpression = "SELECT * FROM Company";
+            string sqlExpression = "SELECT * FROM Company WHERE Deleted = 0";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -42,7 +42,7 @@ namespace DocumentManagement
                             Id = chanceryId,
                             InitChancery = true
                         };
-                        CompanyType companyType = SqlCompanyTypeDAO.GetCompanyType(companyTypeId);
+                        CompanyType companyType = SqlCompanyType.GetCompanyType(companyTypeId);
                         Company company = new Company(director, companyType, chancery, name, address)
                         {
                             Id = id
@@ -57,7 +57,7 @@ namespace DocumentManagement
         public static Company GetCompany(int id)
         {
             Company company = null;
-            string sqlExpression = "SELECT * FROM Company WHERE Id = @id";
+            string sqlExpression = "SELECT * FROM Company WHERE Id = @id AND Deleted = 0";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -84,7 +84,7 @@ namespace DocumentManagement
                             Id = chanceryId,
                             InitChancery = true
                         };
-                        CompanyType companyType = SqlCompanyTypeDAO.GetCompanyType(companyTypeId);
+                        CompanyType companyType = SqlCompanyType.GetCompanyType(companyTypeId);
                         company = new Company(director, companyType, chancery, name, address)
                         {
                             Id = id
@@ -185,35 +185,13 @@ namespace DocumentManagement
 
         public static void DeleteCompany(int id)
         {
-            string sqlExpression = "DELETE FROM Company WHERE Id = @id";
+            string sqlExpression = "UPDATE Company SET Deleted = 1 WHERE Id = @id";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
                 command.Parameters.Add("@id", SqlDbType.Int);
                 command.Parameters["@id"].Value = id;
-                command.ExecuteNonQuery();
-            }
-        }
-
-        public static void UncheckCompanyDirectorConstraint()
-        {
-            string sqlExpression = "ALTER TABLE Company NOCHECK CONSTRAINT Company_Director";
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                SqlCommand command = new SqlCommand(sqlExpression, connection);
-                command.ExecuteNonQuery();
-            }
-        }
-
-        public static void CheckCompanyDirectorConstraint()
-        {
-            string sqlExpression = "ALTER TABLE Company CHECK CONSTRAINT Company_Director";
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                SqlCommand command = new SqlCommand(sqlExpression, connection);
                 command.ExecuteNonQuery();
             }
         }

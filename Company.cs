@@ -30,7 +30,7 @@ namespace DocumentManagement
                     }
                     else
                     {
-                        _director = SqlDirectorDAO.GetDirector(_director.EmployeeId);
+                        _director = SqlDirector.GetDirector(_director.EmployeeId);
                     }
                 }
                 return _director;
@@ -53,7 +53,7 @@ namespace DocumentManagement
                     }
                     else
                     {
-                        _companyChancery = SqlChanceryDAO.GetChancery(_companyChancery.Id);
+                        _companyChancery = SqlChancery.GetChancery(_companyChancery.Id);
                     }
                 }
                 return _companyChancery;
@@ -75,10 +75,69 @@ namespace DocumentManagement
             Address = address;
         }
 
+        public static Company GetCompany(int Id)
+        {
+            return SqlCompany.GetCompany(Id);
+        }
+
+        public void Persist()
+        {
+            //Добавляем директора в БД
+            if (Director.Company != null)
+            {
+                Director.Company = null;
+            }
+            Director.Persist();
+            //Добавляем секретариат в БД
+            if (CompanyChancery.ChanceryCompany != null)
+            {
+                CompanyChancery.ChanceryCompany = null;
+            }
+            CompanyChancery.Persist();
+            //Добавляем компанию в БД
+            Id = SqlCompany.AddCompany(this);
+            //Обновляем поля в объектах Директор и Секретариат
+            Director.Company = this;
+            Director.Update();
+            CompanyChancery.ChanceryCompany = this;
+            CompanyChancery.Update();
+            //Обновляем директора и секретариат в компании
+            //Director = director;
+            //company.CompanyChancery = chancery;
+        }
+
+        public void Update()
+        {
+            SqlCompany.UpdateCompany(this);
+        }
+
+        public void Delete()
+        {
+            Director.Quit();
+            Director = null;
+            CompanyChancery.Delete();
+            CompanyChancery = null;
+            SqlCompany.DeleteCompany(Id);
+        }
+
         public override string ToString()
         {
             return Name + "(" + Type.ToString() + ")";
         }
-       
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+            Company company = (Company)obj;
+            if (company.Id <= 0 || Id <= 0)
+            {
+                return false;
+            }
+            return Id == company.Id;
+        }
+
     }
 }

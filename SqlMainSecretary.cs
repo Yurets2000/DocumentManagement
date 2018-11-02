@@ -9,14 +9,14 @@ using System.Data;
 
 namespace DocumentManagement
 {
-    public class SqlMainSecretaryDAO
+    public class SqlMainSecretary
     {
         private static string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
         public static List<MainSecretary> GetAllMainSecretaries()
         {
             List<MainSecretary> mainSecretaries = new List<MainSecretary>();
-            string sqlExpression = "SELECT * FROM MainSecretary";
+            string sqlExpression = "SELECT * FROM MainSecretary WHERE Deleted = 0";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -30,7 +30,7 @@ namespace DocumentManagement
                         int personId = (int)reader["PersonId"];
                         int companyId = (int)reader["CompanyId"];
                         int salary = (int)reader["Salary"];
-                        Person person = SqlPersonDAO.GetPerson(personId);
+                        Person person = SqlPerson.GetPerson(personId);
                         Company company = new Company()
                         {
                             Id = companyId,
@@ -50,7 +50,7 @@ namespace DocumentManagement
         public static MainSecretary GetMainSecretary(int id)
         {
             MainSecretary mainSecretary = null;
-            string sqlExpression = "SELECT * FROM MainSecretary WHERE Id = @id";
+            string sqlExpression = "SELECT * FROM MainSecretary WHERE Id = @id AND Deleted = 0";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -65,7 +65,7 @@ namespace DocumentManagement
                         int personId = (int)reader["PersonId"];
                         int companyId = (int)reader["CompanyId"];
                         int salary = (int)reader["Salary"];
-                        Person person = SqlPersonDAO.GetPerson(personId);
+                        Person person = SqlPerson.GetPerson(personId);
                         Company company = new Company()
                         {
                             Id = companyId,
@@ -84,7 +84,7 @@ namespace DocumentManagement
         public static MainSecretary GetCompanyMainSecretary(int companyId)
         {
             MainSecretary mainSecretary = null;
-            string sqlExpression = "SELECT * FROM MainSecretary WHERE CompanyId = @companyId";
+            string sqlExpression = "SELECT * FROM MainSecretary WHERE CompanyId = @companyId AND Deleted = 0";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -99,7 +99,41 @@ namespace DocumentManagement
                         int id = (int)reader["Id"];
                         int personId = (int)reader["PersonId"];
                         int salary = (int)reader["Salary"];
-                        Person person = SqlPersonDAO.GetPerson(personId);
+                        Person person = SqlPerson.GetPerson(personId);
+                        Company company = new Company()
+                        {
+                            Id = companyId,
+                            InitCompany = true
+                        };
+                        mainSecretary = new MainSecretary(person, company, salary)
+                        {
+                            EmployeeId = id
+                        };
+                    }
+                }
+            }
+            return mainSecretary;
+        }
+
+        public static MainSecretary GetMainSecretaryByPerson(int personId)
+        {
+            MainSecretary mainSecretary = null;
+            string sqlExpression = "SELECT * FROM MainSecretary WHERE PersonId = @personId AND Deleted = 0";
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand(sqlExpression, connection);
+                command.Parameters.Add("@personId", SqlDbType.Int);
+                command.Parameters["@personId"].Value = personId;
+                SqlDataReader reader = command.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        int id = (int)reader["Id"];
+                        int companyId = (int)reader["CompanyId"];
+                        int salary = (int)reader["Salary"];
+                        Person person = SqlPerson.GetPerson(personId);
                         Company company = new Company()
                         {
                             Id = companyId,
@@ -169,7 +203,7 @@ namespace DocumentManagement
 
         public static void DeleteMainSecretary(int id)
         {
-            string sqlExpression = "DELETE FROM MainSecretary WHERE Id = @id";
+            string sqlExpression = "UPDATE MainSecretary SET Deleted = 1 WHERE Id = @id";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();

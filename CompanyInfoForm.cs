@@ -154,10 +154,11 @@ namespace DocumentManagement
             {
                 Name = "typeBox",
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                DataSource = SqlCompanyTypeDAO.GetAllCompanyTypes(),
-                SelectedValue = company.Type
+                DataSource = SqlCompanyType.GetAllCompanyTypes()
             };
             typeBox.SetBounds(95, 90, 150, 30);
+            Controls.Add(typeBox);
+            typeBox.SelectedIndex = typeBox.FindString(company.Type.ToString());
 
             Button directorChooserButton = new Button
             {
@@ -173,7 +174,7 @@ namespace DocumentManagement
             {
                 Name = "personsBox",
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                DataSource = SqlPersonDAO.GetAllPersons().Where(p => !p.Working).ToList()
+                DataSource = SqlPerson.GetAllPersons().Where(p => !p.Working).ToList()
             };
             personsBox.SetBounds(10, 195, 235, 30);
 
@@ -213,7 +214,7 @@ namespace DocumentManagement
             else
             {
                 Person person = (Person)personsBox.SelectedItem;
-                EmployeeForm employeeForm = new EmployeeForm(person);
+                DirectorForm employeeForm = new DirectorForm(person);
                 employeeForm.Disposed += new EventHandler(DirectorDisposeEvent);
                 employeeForm.Activate();
                 employeeForm.ShowDialog();
@@ -222,11 +223,14 @@ namespace DocumentManagement
 
         private void DirectorDisposeEvent(object sender, EventArgs e)
         {         
-            EmployeeForm form = (EmployeeForm)sender;
+            DirectorForm form = (DirectorForm)sender;
             if (form.CorrectOnClose)
             {
                 Person person = form.Person;
-                director = new Director(person, company, form.Salary);
+                director = new Director(person, company, form.Signature, form.Salary)
+                {
+                    PendingDocuments = new List<Document>()
+                };
                 directorChanged = true;
             }
         }
@@ -286,16 +290,13 @@ namespace DocumentManagement
                     if (directorChanged)
                     {
                         //Удаляем старого директора
-                        Director oldDirector = company.Director;
-                        oldDirector.Working = false;
-                        SqlPersonDAO.UpdatePerson(oldDirector);
+                        company.Director.Delete();
                         company.Director = null;
-                        SqlCompanyDAO.UpdateCompany(company);
-                        SqlDirectorDAO.DeleteDirector(oldDirector.EmployeeId);
                         //Добавляем нового директора
-                        int directorId = SqlDirectorDAO.AddDirector(director);
-                        director.EmployeeId = directorId;
-                        SqlPersonDAO.UpdatePerson(director);
+                        director.Persist();
+                        company.Director = director;
+                        //Обновляем компанию
+                        company.Update();
                     }
                     //Обновляем компанию
                     string name = nameBox.Text;
@@ -304,11 +305,7 @@ namespace DocumentManagement
                     company.Name = name;
                     company.Address = address;
                     company.Type = type;
-                    if (directorChanged)
-                    {
-                        company.Director = director;
-                    }
-                    SqlCompanyDAO.UpdateCompany(company);
+                    company.Update();
                     DocumentManagementForm form = (DocumentManagementForm)Application.OpenForms["DocumentManagementForm"];
                     form.UpdateCompaniesBox();
                 }

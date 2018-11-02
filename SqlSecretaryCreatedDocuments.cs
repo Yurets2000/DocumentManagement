@@ -9,27 +9,27 @@ using System.Data;
 
 namespace DocumentManagement
 {
-    public class SqlArchiveDAO
+    public class SqlSecretaryCreatedDocuments
     {
         private static string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
-        public static List<Document> GetArchivedDocuments(int chanceryId)
+        public static List<Document> GetCurrentDocuments(int secretaryId)
         {
             List<Document> documents = new List<Document>();
-            string sqlExpression = "SELECT * FROM Archive WHERE ChanceryId = @chanceryId";
+            string sqlExpression = "SELECT * FROM SecretaryCreatedDocuments WHERE SecretaryId = @secretaryId AND Deleted = 0";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
-                command.Parameters.Add("@chanceryId", SqlDbType.Int);
-                command.Parameters["@chanceryId"].Value = chanceryId;
+                command.Parameters.Add("@secretaryId", SqlDbType.Int);
+                command.Parameters["@secretaryId"].Value = secretaryId;
                 SqlDataReader reader = command.ExecuteReader();
                 if (reader.HasRows)
                 {
                     while (reader.Read())
                     {
                         int documentId = (int)reader["DocumentId"];
-                        Document document = SqlDocumentDAO.GetDocument(documentId);
+                        Document document = SqlDocument.GetDocument(documentId);
                         documents.Add(document);
                     }
                 }
@@ -37,31 +37,37 @@ namespace DocumentManagement
             return documents;
         }
 
-        public static void AddArchivedDocument(int chanceryId, int documentId)
+        public static List<DocumentInfo> GetCreatedDocumentsInfo(int secretaryId)
         {
-            string sqlExpression = "INSERT INTO Archive(ChanceryId, DocumentId) VALUES (@chanceryId, @documentId)";
+            //Some stuff
+            return null;
+        }
+
+        public static void AddCreatedDocument(int secretaryId, int documentId)
+        {
+            string sqlExpression = "INSERT INTO SecretaryCreatedDocuments(SecretaryId, DocumentId) VALUES (@secretaryId, @documentId)";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
-                command.Parameters.Add("@chanceryId", SqlDbType.Int);
+                command.Parameters.Add("@secretaryId", SqlDbType.Int);
                 command.Parameters.Add("@documentId", SqlDbType.Int);
-                command.Parameters["@chanceryId"].Value = chanceryId;
+                command.Parameters["@secretaryId"].Value = secretaryId;
                 command.Parameters["@documentId"].Value = documentId;
                 command.ExecuteNonQuery();
             }
         }
 
-        public static void DeleteArchivedDocument(int chanceryId, int documentId)
+        public static void DeleteCreatedDocument(int secretaryId, int documentId)
         {
-            string sqlExpression = "DELETE FROM Archive WHERE ChanceryId = @chanceryId AND DocumentId = @documentId";
+            string sqlExpression = "UPDATE SecretaryCreatedDocuments SET Deleted = 1 WHERE SecretaryId = @secretaryId AND DocumentId = @documentId";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
-                command.Parameters.Add("@chanceryId", SqlDbType.Int);
+                command.Parameters.Add("@secretaryId", SqlDbType.Int);
                 command.Parameters.Add("@documentId", SqlDbType.Int);
-                command.Parameters["@chanceryId"].Value = chanceryId;
+                command.Parameters["@secretaryId"].Value = secretaryId;
                 command.Parameters["@documentId"].Value = documentId;
                 command.ExecuteNonQuery();
             }
