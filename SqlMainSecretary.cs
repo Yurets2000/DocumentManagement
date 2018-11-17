@@ -26,16 +26,24 @@ namespace DocumentManagement
                 {
                     while (reader.Read())
                     {
+                        Person person = null;
+                        Company company = null;
                         int id = (int)reader["Id"];
-                        int personId = (int)reader["PersonId"];
-                        int companyId = (int)reader["CompanyId"];
                         int salary = (int)reader["Salary"];
-                        Person person = SqlPerson.GetPerson(personId);
-                        Company company = new Company()
+                        if (reader["PersonId"] != DBNull.Value)
                         {
-                            Id = companyId,
-                            InitCompany = true
-                        };
+                            int personId = (int)reader["PersonId"];
+                            person = SqlPerson.GetPerson(personId);
+                        }
+                        if (reader["CompanyId"] != DBNull.Value)
+                        {
+                            int companyId = (int)reader["CompanyId"];
+                            company = new Company()
+                            {
+                                Id = companyId,
+                                InitState = InitializationState.INITIALIZATION_NEEDED
+                            };
+                        }
                         MainSecretary mainSecretary = new MainSecretary(person, company, salary)
                         {
                             EmployeeId = id
@@ -62,15 +70,23 @@ namespace DocumentManagement
                 {
                     while (reader.Read())
                     {
-                        int personId = (int)reader["PersonId"];
-                        int companyId = (int)reader["CompanyId"];
+                        Person person = null;
+                        Company company = null;
                         int salary = (int)reader["Salary"];
-                        Person person = SqlPerson.GetPerson(personId);
-                        Company company = new Company()
+                        if (reader["PersonId"] != DBNull.Value)
                         {
-                            Id = companyId,
-                            InitCompany = true
-                        };
+                            int personId = (int)reader["PersonId"];
+                            person = SqlPerson.GetPerson(personId);
+                        }
+                        if (reader["CompanyId"] != DBNull.Value)
+                        {
+                            int companyId = (int)reader["CompanyId"];
+                            company = new Company()
+                            {
+                                Id = companyId,
+                                InitState = InitializationState.INITIALIZATION_NEEDED
+                            };
+                        }
                         mainSecretary = new MainSecretary(person, company, salary)
                         {
                             EmployeeId = id
@@ -96,18 +112,11 @@ namespace DocumentManagement
                 {
                     while (reader.Read())
                     {
-                        int id = (int)reader["Id"];
-                        int personId = (int)reader["PersonId"];
-                        int salary = (int)reader["Salary"];
-                        Person person = SqlPerson.GetPerson(personId);
-                        Company company = new Company()
+                        int id = (int)reader["Id"];                      
+                        mainSecretary = new MainSecretary
                         {
-                            Id = companyId,
-                            InitCompany = true
-                        };
-                        mainSecretary = new MainSecretary(person, company, salary)
-                        {
-                            EmployeeId = id
+                            EmployeeId = id,
+                            InitState = InitializationState.INITIALIZATION_NEEDED
                         };
                     }
                 }
@@ -130,18 +139,11 @@ namespace DocumentManagement
                 {
                     while (reader.Read())
                     {
-                        int id = (int)reader["Id"];
-                        int companyId = (int)reader["CompanyId"];
-                        int salary = (int)reader["Salary"];
-                        Person person = SqlPerson.GetPerson(personId);
-                        Company company = new Company()
+                        int id = (int)reader["Id"];                       
+                        mainSecretary = new MainSecretary
                         {
-                            Id = companyId,
-                            InitCompany = true
-                        };
-                        mainSecretary = new MainSecretary(person, company, salary)
-                        {
-                            EmployeeId = id
+                            EmployeeId = id,
+                            InitState = InitializationState.INITIALIZATION_NEEDED
                         };
                     }
                 }
@@ -149,17 +151,18 @@ namespace DocumentManagement
             return mainSecretary;
         }
 
-        public static int AddMainSecretary(MainSecretary mainSecretary)
+        public static void AddMainSecretary(MainSecretary mainSecretary)
         {
-            int id = -1;
-            string sqlExpression = "INSERT INTO MainSecretary(PersonId, CompanyId, Salary) output INSERTED.Id VALUES(@personId, @companyId, @salary)";
+            string sqlExpression = "INSERT INTO MainSecretary(Id, PersonId, CompanyId, Salary) VALUES(@id, @personId, @companyId, @salary)";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
+                command.Parameters.Add("@id", SqlDbType.Int);
                 command.Parameters.Add("@personId", SqlDbType.Int);
                 command.Parameters.Add("@companyId", SqlDbType.Int);
                 command.Parameters.Add("@salary", SqlDbType.Int);
+                command.Parameters["@id"].Value = mainSecretary.EmployeeId;
                 command.Parameters["@personId"].Value = mainSecretary.Id;
                 if (mainSecretary.Company == null)
                 {
@@ -170,9 +173,8 @@ namespace DocumentManagement
                     command.Parameters["@companyId"].Value = mainSecretary.Company.Id;
                 }
                 command.Parameters["@salary"].Value = mainSecretary.Salary;
-                id = (int)command.ExecuteScalar();
+                command.ExecuteNonQuery();
             }
-            return id;
         }
 
         public static void UpdateMainSecretary(MainSecretary mainSecretary)
@@ -212,6 +214,19 @@ namespace DocumentManagement
                 command.Parameters["@id"].Value = id;
                 command.ExecuteNonQuery();
             }
+        }
+
+        public static int GetMaxId()
+        {
+            int max = 0;
+            string sqlExpression = "SELECT COALESCE(MAX(Id), 0) FROM MainSecretary";
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand(sqlExpression, connection);
+                max = (int)command.ExecuteScalar();
+            }
+            return max;
         }
     }
 }

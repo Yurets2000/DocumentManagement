@@ -8,34 +8,11 @@ namespace DocumentManagement
 {
     public abstract class Employee : Person
     {
+        public InitializationState InitState { get; set; } = InitializationState.NOT_INITIALIZED;
+        public new UpdateState UpdateState { get; set; } = UpdateState.UPDATE_NEEDED;
         public int Salary { get; set; }
         public int EmployeeId { get; set; }
-
-        private Company _company;
-
-        public Company Company
-        {
-            get
-            {
-                if(_company != null && _company.InitCompany)
-                {
-                    if(_company.Id <= 0)
-                    {
-                        throw new Exception("Company Id <= 0");
-                    }
-                    else
-                    {
-                        _company = SqlCompany.GetCompany(_company.Id);
-                        _company.InitCompany = false;
-                    }
-                }
-                return _company;
-            }
-            set
-            {
-                _company = value;
-            }
-        }
+        public Company Company { get; set; }
 
         public Employee() { }
 
@@ -43,6 +20,7 @@ namespace DocumentManagement
         {
             Id = person.Id;
             Working = true;
+            person.Working = true;
             Company = company;
             Salary = salary;
         }
@@ -51,7 +29,7 @@ namespace DocumentManagement
 
         public override bool Equals(object obj)
         {
-            if (obj == null)
+            if (obj == null || obj == DBNull.Value)
             {
                 return false;
             }
@@ -61,6 +39,14 @@ namespace DocumentManagement
                 return false;
             }
             return EmployeeId == employee.EmployeeId;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = -1499410252;
+            hashCode = hashCode * -1521134295 + base.GetHashCode();
+            hashCode = hashCode * -1521134295 + EmployeeId.GetHashCode();
+            return hashCode;
         }
     }
 }

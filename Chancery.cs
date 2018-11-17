@@ -8,85 +8,32 @@ namespace DocumentManagement
 {
     public class Chancery
     {
-        public bool InitChancery { get; set; }
-
+        public InitializationState InitState { get; set; } = InitializationState.NOT_INITIALIZED;
+        public UpdateState UpdateState { get; set; } = UpdateState.UPDATE_NEEDED;
         public int Id { get; set; }
-        public List<Document> Archive { get; set; } = new List<Document>();
-        public List<Document> PendingDocuments { get; set; } = new List<Document>();
-        public List<Secretary> Secretaries { get; set; } = new List<Secretary>();
-
-        private Company _chanceryCompany;
-        private MainSecretary _mainSecretary;
-        
-        public Company ChanceryCompany
-        {
-            get
-            {
-                if(_chanceryCompany != null && _chanceryCompany.InitCompany)
-                {
-                    if(_chanceryCompany.Id <= 0)
-                    {
-                        throw new Exception("Company Id <= 0");
-                    }
-                    else
-                    {
-                        _chanceryCompany = SqlCompany.GetCompany(_chanceryCompany.Id);
-                    }
-                }
-                return _chanceryCompany;
-            }
-            set
-            {
-                _chanceryCompany = value;
-            }
-        }
-        public MainSecretary MainSecretary
-        {
-            get
-            {
-                if(_mainSecretary != null && _mainSecretary.InitMainSecretary)
-                {
-                    if(_mainSecretary.EmployeeId <= 0)
-                    {
-                        throw new Exception("MainSecretary Id <= 0");
-                    }
-                    else
-                    {
-                        _mainSecretary = SqlMainSecretary.GetMainSecretary(_mainSecretary.EmployeeId);
-                    }
-                }
-                return _mainSecretary;
-            }
-            set
-            {
-                _mainSecretary = value;
-            }
-        }
+        public List<Document> Archive { get; set; }
+        public List<Document> PendingDocuments { get; set; }
+        public List<Secretary> Secretaries { get; set; }
+        public Company Company { get; set; }
+        public MainSecretary MainSecretary { get; set; }
 
         public Chancery() { }
 
         public Chancery(Company chanceryCompany)
         {
-            ChanceryCompany = chanceryCompany;
+            Company = chanceryCompany;
         }
 
         public void Persist()
         {
-            Id = SqlChancery.AddChancery(this);
-        }
-
-        public static Chancery GetChancery(int Id)
-        {
-            return SqlChancery.GetChancery(Id);
-        }
-
-        public void Update()
-        {
-            SqlChancery.UpdateChancery(this);
+            DataLists dataLists = DataStorage.GetInstance().DataLists;
+            Id = DataLists.GenerateChanceryId();
+            dataLists.Chanceries.Add(this);
         }
 
         public void Delete()
         {
+            DataLists dataLists = DataStorage.GetInstance().DataLists;
             //Удаляем всех секретарей из секретариата
             foreach (Secretary secretary in Secretaries)
             {
@@ -101,24 +48,22 @@ namespace DocumentManagement
             }
             //Удаляем необработанные документы
             foreach (Document document in PendingDocuments)
-            {
-                SqlPendingDocuments.DeletePendingDocument(Id, document.Id);
+            {     
                 document.Delete();
             }
             PendingDocuments = null;
             //Удаляем архив
             foreach (Document document in Archive)
             {
-                SqlArchive.DeleteArchivedDocument(Id, document.Id);
                 document.Delete();
             }
             Archive = null;
-            SqlChancery.DeleteChancery(Id);
+            dataLists.Chanceries.Remove(this);
         }
 
         public override bool Equals(object obj)
         {
-            if (obj == null)
+            if (obj == null || obj == DBNull.Value)
             {
                 return false;
             }
@@ -128,6 +73,11 @@ namespace DocumentManagement
                 return false;
             }
             return Id == chancery.Id;
+        }
+
+        public override int GetHashCode()
+        {
+            return 2108858624 + Id.GetHashCode();
         }
     }
 }

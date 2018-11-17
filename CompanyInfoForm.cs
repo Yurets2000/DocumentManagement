@@ -154,7 +154,7 @@ namespace DocumentManagement
             {
                 Name = "typeBox",
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                DataSource = SqlCompanyType.GetAllCompanyTypes()
+                DataSource = DataStorage.GetInstance().DataLists.CompanyTypes
             };
             typeBox.SetBounds(95, 90, 150, 30);
             Controls.Add(typeBox);
@@ -174,7 +174,7 @@ namespace DocumentManagement
             {
                 Name = "personsBox",
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                DataSource = SqlPerson.GetAllPersons().Where(p => !p.Working).ToList()
+                DataSource = DataStorage.GetInstance().DataLists.Persons.Where(p => !p.Working).ToList()
             };
             personsBox.SetBounds(10, 195, 235, 30);
 
@@ -198,7 +198,7 @@ namespace DocumentManagement
 
         private void OpenChanceryEvent(object sender, EventArgs e)
         {
-            Chancery chancery = company.CompanyChancery;
+            Chancery chancery = company.Chancery;
             ChanceryInfoForm chanceryInfoForm = new ChanceryInfoForm(chancery);
             chanceryInfoForm.Activate();
             chanceryInfoForm.ShowDialog();
@@ -295,8 +295,6 @@ namespace DocumentManagement
                         //Добавляем нового директора
                         director.Persist();
                         company.Director = director;
-                        //Обновляем компанию
-                        company.Update();
                     }
                     //Обновляем компанию
                     string name = nameBox.Text;
@@ -305,7 +303,6 @@ namespace DocumentManagement
                     company.Name = name;
                     company.Address = address;
                     company.Type = type;
-                    company.Update();
                     DocumentManagementForm form = (DocumentManagementForm)Application.OpenForms["DocumentManagementForm"];
                     form.UpdateCompaniesBox();
                 }

@@ -27,20 +27,16 @@ namespace DocumentManagement
                     while (reader.Read())
                     {
                         int id = (int)reader["Id"];
-                        int directorId = (int)reader["DirectorId"];
-                        int chanceryId = (int)reader["ChanceryId"];
                         int companyTypeId = (int)reader["CompanyTypeId"];
                         string name = (string)reader["CompanyName"];
                         string address = (string)reader["CompanyAddress"];
                         Director director = new Director()
                         {
-                            EmployeeId = directorId,
-                            InitDirector = true
+                            InitState = InitializationState.INITIALIZATION_NEEDED
                         };
                         Chancery chancery = new Chancery()
                         {
-                            Id = chanceryId,
-                            InitChancery = true
+                            InitState = InitializationState.INITIALIZATION_NEEDED
                         };
                         CompanyType companyType = SqlCompanyType.GetCompanyType(companyTypeId);
                         Company company = new Company(director, companyType, chancery, name, address)
@@ -69,20 +65,16 @@ namespace DocumentManagement
                 {
                     while (reader.Read())
                     {
-                        int directorId = (int)reader["DirectorId"];
-                        int chanceryId = (int)reader["ChanceryId"];
                         int companyTypeId = (int)reader["CompanyTypeId"];
                         string name = (string)reader["CompanyName"];
                         string address = (string)reader["CompanyAddress"];
                         Director director = new Director()
                         {
-                            EmployeeId = directorId,
-                            InitDirector = true
+                            InitState = InitializationState.INITIALIZATION_NEEDED
                         };
                         Chancery chancery = new Chancery()
                         {
-                            Id = chanceryId,
-                            InitChancery = true
+                            InitState = InitializationState.INITIALIZATION_NEEDED
                         };
                         CompanyType companyType = SqlCompanyType.GetCompanyType(companyTypeId);
                         company = new Company(director, companyType, chancery, name, address)
@@ -95,35 +87,19 @@ namespace DocumentManagement
             return company;
         }
 
-        public static int AddCompany(Company company)
+        public static void AddCompany(Company company)
         {
-            int id = -1;
-            string sqlExpression = "INSERT INTO Company(DirectorId, ChanceryId, CompanyTypeId, CompanyName, CompanyAddress) output INSERTED.Id VALUES(@directorId, @chanceryId, @companyTypeId, @companyName, @companyAddress)";
+            string sqlExpression = "INSERT INTO Company(Id, CompanyTypeId, CompanyName, CompanyAddress) VALUES(@id, @companyTypeId, @companyName, @companyAddress)";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
-                command.Parameters.Add("@directorId", SqlDbType.Int);
-                command.Parameters.Add("@chanceryId", SqlDbType.Int);
+                command.Parameters.Add("@id", SqlDbType.Int);
                 command.Parameters.Add("@companyTypeId", SqlDbType.Int);
                 command.Parameters.Add("@companyName", SqlDbType.VarChar);
                 command.Parameters.Add("@companyAddress", SqlDbType.VarChar);
-                if(company.Director == null)
-                {
-                    command.Parameters["@directorId"].Value = DBNull.Value;
-                }
-                else
-                {
-                    command.Parameters["@directorId"].Value = company.Director.EmployeeId;
-                }
-                if(company.CompanyChancery == null)
-                {
-                    command.Parameters["@chanceryId"].Value = DBNull.Value;
-                }
-                else
-                {
-                    command.Parameters["@chanceryId"].Value = company.CompanyChancery.Id;
-                }
+
+                command.Parameters["@id"].Value = company.Id;
                 if (company.Type == null)
                 {
                     command.Parameters["@companyTypeId"].Value = DBNull.Value;
@@ -134,40 +110,21 @@ namespace DocumentManagement
                 }
                 command.Parameters["@companyName"].Value = company.Name;
                 command.Parameters["@companyAddress"].Value = company.Address;
-                id = (int)command.ExecuteScalar();
+                command.ExecuteNonQuery();
             }
-            return id;
         }
 
         public static void UpdateCompany(Company company)
         {
-            string sqlExpression = "UPDATE Company SET DirectorId = @directorId, ChanceryId = @chanceryId, CompanyTypeId = @companyTypeId, CompanyName = @companyName, CompanyAddress = @companyAddress WHERE Id = @id";
+            string sqlExpression = "UPDATE Company SET CompanyTypeId = @companyTypeId, CompanyName = @companyName, CompanyAddress = @companyAddress WHERE Id = @id";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
-                command.Parameters.Add("@directorId", SqlDbType.Int);
-                command.Parameters.Add("@chanceryId", SqlDbType.Int);
                 command.Parameters.Add("@companyTypeId", SqlDbType.Int);
                 command.Parameters.Add("@companyName", SqlDbType.VarChar);
                 command.Parameters.Add("@companyAddress", SqlDbType.VarChar);
                 command.Parameters.Add("@id", SqlDbType.Int);
-                if (company.Director == null)
-                {
-                    command.Parameters["@directorId"].Value = DBNull.Value;
-                }
-                else
-                {
-                    command.Parameters["@directorId"].Value = company.Director.EmployeeId;
-                }
-                if (company.CompanyChancery == null)
-                {
-                    command.Parameters["@chanceryId"].Value = DBNull.Value;
-                }
-                else
-                {
-                    command.Parameters["@chanceryId"].Value = company.CompanyChancery.Id;
-                }
                 if (company.Type == null)
                 {
                     command.Parameters["@companyTypeId"].Value = DBNull.Value;
@@ -194,6 +151,19 @@ namespace DocumentManagement
                 command.Parameters["@id"].Value = id;
                 command.ExecuteNonQuery();
             }
+        }
+
+        public static int GetMaxId()
+        {
+            int max = 0;
+            string sqlExpression = "SELECT COALESCE(MAX(Id), 0) FROM Company";
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand(sqlExpression, connection);
+                max = (int)command.ExecuteScalar();
+            }
+            return max;
         }
     }
 }

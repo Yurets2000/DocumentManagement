@@ -85,7 +85,7 @@ namespace DocumentManagement
             {
                 Name = "secretariesBox",
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                DataSource = mainSecretary.Company.CompanyChancery.Secretaries
+                DataSource = mainSecretary.Company.Chancery.Secretaries
             };
             secretariesBox.SetBounds(300, 55, 250, 30);
 
@@ -102,7 +102,7 @@ namespace DocumentManagement
             {
                 Name = "pendingDocumentsBox",
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                DataSource = mainSecretary.Company.CompanyChancery.PendingDocuments
+                DataSource = mainSecretary.Company.Chancery.PendingDocuments
             };
             pendingDocumentsBox.SetBounds(300, 140, 250, 30);
 
@@ -235,7 +235,6 @@ namespace DocumentManagement
                 if (salaryValidated)
                 {
                     mainSecretary.Salary = int.Parse(salaryBox.Text);
-                    mainSecretary.Update();
 
                     Controls.Remove(salaryBox);
                     Controls.Remove((Control)sender);
@@ -265,7 +264,7 @@ namespace DocumentManagement
             ComboBox pendingDocumentsBox = (ComboBox)Utils.FindControl(this, "pendingDocumentsBox");
             pendingDocumentsBox.DataSource = null;
             pendingDocumentsBox.Items.Clear();
-            pendingDocumentsBox.DataSource = mainSecretary.Company.CompanyChancery.PendingDocuments;
+            pendingDocumentsBox.DataSource = mainSecretary.Company.Chancery.PendingDocuments;
         }
     }
 }

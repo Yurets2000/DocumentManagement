@@ -65,19 +65,20 @@ namespace DocumentManagement
             return companyType;
         }
 
-        public static int AddCompanyType(CompanyType companyType)
+        public static void AddCompanyType(CompanyType companyType)
         {
-            int id = -1;
-            string sqlExpression = "INSERT INTO CompanyType(Name) output INSERTED.Id VALUES (@name)";
+            string sqlExpression = "INSERT INTO CompanyType(Id, Name) VALUES (@id, @name)";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
+
+                command.Parameters.Add("@id", SqlDbType.Int);
                 command.Parameters.Add("@name", SqlDbType.Text);
+                command.Parameters["@id"].Value = companyType.Id;
                 command.Parameters["@name"].Value = companyType.type;
-                id = (int)command.ExecuteScalar();
+                command.ExecuteNonQuery();
             }
-            return id;
         }
 
         public static void UpdateCompanyType(CompanyType companyType)
@@ -106,6 +107,19 @@ namespace DocumentManagement
                 command.Parameters["@id"].Value = id;
                 command.ExecuteNonQuery();
             }
+        }
+
+        public static int GetMaxId()
+        {
+            int max = 0;
+            string sqlExpression = "SELECT COALESCE(MAX(Id), 0) FROM CompanyType";
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand(sqlExpression, connection);
+                max = (int)command.ExecuteScalar();
+            }
+            return max;
         }
     }
 }

@@ -26,6 +26,8 @@ namespace DocumentManagement
                 {
                     while (reader.Read())
                     {
+                        Company receiver = null;
+                        Company sender = null;                     
                         int id = (int)reader["Id"];
                         int documentTypeId = (int)reader["DocumentTypeId"];
                         DocumentType type = SqlDocumentType.GetDocumentType(documentTypeId);
@@ -34,9 +36,25 @@ namespace DocumentManagement
                         string content = (string)reader["Content"];
                         DateTime creationDate = (DateTime)reader["CreationDate"];
                         bool senderConfirm = (bool)reader["SenderConfirm"];
-                        bool receiverConfirm = (bool)reader["ReceiverCofirm"];
-                        Company receiver = SqlCompany.GetCompany((int)reader["ReceiverId"]);
-                        Company sender = SqlCompany.GetCompany((int)reader["SenderId"]);
+                        bool receiverConfirm = (bool)reader["ReceiverConfirm"];
+                        if(reader["ReceiverId"] != DBNull.Value)
+                        {
+                            int receiverId = (int)reader["ReceiverId"];
+                            receiver = new Company()
+                            {
+                                Id = receiverId,
+                                InitState = InitializationState.INITIALIZATION_NEEDED
+                            };
+                        }
+                        if (reader["SenderId"] != DBNull.Value)
+                        {
+                            int senderId = (int)reader["SenderId"];
+                            sender = new Company()
+                            {
+                                Id = senderId,
+                                InitState = InitializationState.INITIALIZATION_NEEDED
+                            };
+                        }
                         Document document = new Document(type, documentCode, title)
                         {
                             Id = id,
@@ -69,6 +87,8 @@ namespace DocumentManagement
                 {
                     while (reader.Read())
                     {
+                        Company receiver = null;
+                        Company sender = null;
                         int documentTypeId = (int)reader["DocumentTypeId"];
                         DocumentType type = SqlDocumentType.GetDocumentType(documentTypeId);
                         int documentCode = (int)reader["DocumentCode"];
@@ -77,8 +97,24 @@ namespace DocumentManagement
                         DateTime creationDate = (DateTime)reader["CreationDate"];
                         bool senderConfirm = (bool)reader["SenderConfirm"];
                         bool receiverConfirm = (bool)reader["ReceiverConfirm"];
-                        Company receiver = SqlCompany.GetCompany((int)reader["ReceiverId"]);
-                        Company sender = SqlCompany.GetCompany((int)reader["SenderId"]);
+                        if (reader["ReceiverId"] != DBNull.Value)
+                        {
+                            int receiverId = (int)reader["ReceiverId"];
+                            receiver = new Company()
+                            {
+                                Id = receiverId,
+                                InitState = InitializationState.INITIALIZATION_NEEDED
+                            };
+                        }
+                        if (reader["SenderId"] != DBNull.Value)
+                        {
+                            int senderId = (int)reader["SenderId"];
+                            sender = new Company()
+                            {
+                                Id = senderId,
+                                InitState = InitializationState.INITIALIZATION_NEEDED
+                            };
+                        }
                         document = new Document(type, documentCode, title)
                         {
                             Id = id,
@@ -95,14 +131,14 @@ namespace DocumentManagement
             return document;
         }
 
-        public static int AddDocument(Document document)
+        public static void AddDocument(Document document)
         {
-            int id = -1;
-            string sqlExpression = "INSERT INTO Document(DocumentTypeId, DocumentCode, Title, Content, CreationDate, ReceiverId, SenderId) output INSERTED.Id VALUES (@documentTypeId, @documentCode, @title, @content, @creationDate, @receiverId, @senderId)";
+            string sqlExpression = "INSERT INTO Document(Id, DocumentTypeId, DocumentCode, Title, Content, CreationDate, ReceiverId, SenderId) VALUES (@id, @documentTypeId, @documentCode, @title, @content, @creationDate, @receiverId, @senderId)";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
+                command.Parameters.Add("@id", SqlDbType.Int);
                 command.Parameters.Add("@documentTypeId", SqlDbType.Int);
                 command.Parameters.Add("@documentCode", SqlDbType.Int);
                 command.Parameters.Add("@title", SqlDbType.Text);
@@ -111,6 +147,7 @@ namespace DocumentManagement
                 command.Parameters.Add("@receiverId", SqlDbType.Int);
                 command.Parameters.Add("@senderId", SqlDbType.Int);
 
+                command.Parameters["@id"].Value = document.Id;
                 command.Parameters["@documentCode"].Value = document.DocumentCode;
                 command.Parameters["@title"].Value = document.Title;
                 command.Parameters["@content"].Value = document.Text;
@@ -139,9 +176,8 @@ namespace DocumentManagement
                 {
                     command.Parameters["@senderId"].Value = document.Sender.Id;
                 }
-                id = (int) command.ExecuteScalar();
+                command.ExecuteNonQuery();
             }
-            return id;
         }
 
         public static void UpdateDocument(Document document)
@@ -208,6 +244,19 @@ namespace DocumentManagement
                 command.Parameters["@id"].Value = id;
                 command.ExecuteNonQuery();
             }
+        }
+
+        public static int GetMaxId()
+        {
+            int max = 0;
+            string sqlExpression = "SELECT COALESCE(MAX(Id), 0) FROM Document";
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand(sqlExpression, connection);
+                max = (int)command.ExecuteScalar();
+            }
+            return max;
         }
     }
 }

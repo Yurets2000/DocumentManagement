@@ -383,7 +383,6 @@ namespace DocumentManagement
                 if (salaryValidated)
                 {
                     secretary.Salary = int.Parse(salaryBox.Text);
-                    secretary.Update();
 
                     Controls.Remove(salaryBox);
                     Controls.Remove((Control)sender);
@@ -425,7 +424,7 @@ namespace DocumentManagement
 
         private void EditCreatedDocumentButton_Click(object sender, EventArgs e)
         {
-            ComboBox createdDocumentsBox = (ComboBox) Utils.FindControl(this, "createdDocumentsBox");
+            ComboBox createdDocumentsBox = (ComboBox)Utils.FindControl(this, "createdDocumentsBox");
             Document document = (Document)createdDocumentsBox.SelectedItem;
             if (document == null)
             {

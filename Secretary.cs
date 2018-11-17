@@ -8,15 +8,19 @@ namespace DocumentManagement
 {
     public class Secretary : Employee
     {
-        public bool InitSecretary { get; set; }
-
         public List<Document> PendingDocuments { get; set; }
         public List<Document> CreatedDocuments { get; set; }
         public Marker Marker { get; set; }
+        public int state = 0;
+        public static int counter = 0;
 
-        public Secretary() : base() { }
+        public Secretary() : base() {
+            counter++;
+        }
 
-        public Secretary(Person person, Company company, int salary) : base(person, company, salary) { }
+        public Secretary(Person person, Company company, int salary) : base(person, company, salary) {
+            counter++;
+        }
 
         public Document CreateDocument(DocumentType type, int documentCode, string title, string content, Company receiver)
         {
@@ -27,32 +31,27 @@ namespace DocumentManagement
                 Sender = Company
             };
             document.Persist();
-            SqlSecretaryCreatedDocuments.AddCreatedDocument(EmployeeId, document.Id);
             CreatedDocuments.Add(document);
+            state = 1;
             return document;
         }
 
         public void SendCreatedDocument(Document document)
         {
             CreatedDocuments.Remove(document);
-            SqlSecretaryCreatedDocuments.DeleteCreatedDocument(EmployeeId, document.Id);
             Director director = Company.Director;
-            SqlDirectorPendingDocuments.AddPendingDocument(director.EmployeeId, document.Id);
             director.PendingDocuments.Add(document);
         }
 
         public void SendPendingDocument(Document document)
         {
             PendingDocuments.Remove(document);
-            SqlSecretaryPendingDocuments.DeletePendingDocument(EmployeeId, document.Id);
             Director director = Company.Director;
-            SqlDirectorPendingDocuments.AddPendingDocument(director.EmployeeId, document.Id);
             director.PendingDocuments.Add(document);
         }
 
         public void RemoveCreatedDocument(Document document)
-        {
-            SqlSecretaryCreatedDocuments.DeleteCreatedDocument(EmployeeId, document.Id);
+        { 
             CreatedDocuments.Remove(document);
             document.Delete();
             document = null;
@@ -60,50 +59,39 @@ namespace DocumentManagement
 
         public new void Persist()
         {
-            int markerId = SqlMarker.AddMarker(Marker);
-            Marker.Id = markerId;
-            EmployeeId = SqlSecretary.AddSecretary(this);
-            SqlPerson.UpdatePerson(this);
-        }
-
-        public new void Update()
-        {
-            SqlSecretary.UpdateSecretary(this);
-        }
-
-        public static Secretary GetSecretary(int id)
-        {
-            return SqlSecretary.GetSecretary(id);
-        }
-
-        public void EditDocument(Document document)
-        {
-            document.Update();
+            DataLists dataLists = DataStorage.GetInstance().DataLists;
+            Marker marker = new Marker(Marker.Color.GREEN);
+            marker.Persist();
+            Marker = marker;
+            EmployeeId = DataLists.GenerateSecretaryId();
+            dataLists.Secretaries.Add(this);
+            Person person = dataLists.Persons.Find((p) => p.Id == Id);
+            person = this;
         }
 
         public override void Quit()
         {
+            DataLists dataLists = DataStorage.GetInstance().DataLists;
             //Удаляем созданные неотправленные документы
             foreach (Document document in CreatedDocuments)
             {
-                SqlSecretaryCreatedDocuments.DeleteCreatedDocument(EmployeeId, document.Id);
                 document.Delete();
             }
             CreatedDocuments = null;
             //Направляем необработанные документы обратно в секретариат
-            Chancery chancery = Company.CompanyChancery;
+            Chancery chancery = Company.Chancery;
             foreach (Document document in PendingDocuments)
             {
-                SqlSecretaryPendingDocuments.DeletePendingDocument(EmployeeId, document.Id);
-                SqlPendingDocuments.AddPendingDocument(chancery.Id, document.Id);
+                chancery.PendingDocuments.Add(document);
             }
             PendingDocuments = null;
             //Удаляем маркер
-            SqlMarker.DeleteMarker(Marker.Id);
+            Marker.Delete();
             Marker = null;
             Working = false;
-            SqlSecretary.DeleteSecretary(EmployeeId);
-            SqlPerson.UpdatePerson(this);
+            dataLists.Secretaries.Remove(this);
+            Person person = dataLists.Persons.Find((p) => p.Id == Id);
+            person = this;
         }
 
         //Получить кол. всех созданных документов

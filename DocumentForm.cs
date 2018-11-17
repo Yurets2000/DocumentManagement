@@ -51,7 +51,7 @@ namespace DocumentManagement
             {
                 Name = "typeBox",
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                DataSource = SqlDocumentType.GetAllDocumentTypes()
+                DataSource = DataStorage.GetInstance().DataLists.DocumentTypes
             };
             typeBox.SetBounds(95, 55, 150, 30);
 
@@ -77,7 +77,7 @@ namespace DocumentManagement
             {
                 Name = "companiesBox",
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                DataSource = SqlCompany.GetAllCompanies()
+                DataSource = DataStorage.GetInstance().DataLists.Companies
             };
             companiesBox.SetBounds(95, 125, 150, 30);
 

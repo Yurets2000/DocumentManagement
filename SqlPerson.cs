@@ -95,26 +95,26 @@ namespace DocumentManagement
             }
         }
 
-        public static int AddPerson(Person person)
+        public static void AddPerson(Person person)
         {
-            int id = -1;
-            string sqlExpression = "INSERT INTO Person(Name, Surname, Age, Working) output INSERTED.Id VALUES (@name, @surname, @age, @working)";
+            string sqlExpression = "INSERT INTO Person(Id, Name, Surname, Age, Working) VALUES (@id, @name, @surname, @age, @working)";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
+                command.Parameters.Add("@id", SqlDbType.Int);
                 command.Parameters.Add("@name", SqlDbType.Text);
                 command.Parameters.Add("@surname", SqlDbType.Text);
                 command.Parameters.Add("@age", SqlDbType.Int);
                 command.Parameters.Add("@working", SqlDbType.Bit);
 
+                command.Parameters["@id"].Value = person.Id;
                 command.Parameters["@name"].Value = person.Name;
                 command.Parameters["@surname"].Value = person.Surname;
                 command.Parameters["@age"].Value = person.Age;
                 command.Parameters["@working"].Value = person.Working;
-                id = (int) command.ExecuteScalar();
+                command.ExecuteNonQuery();
             }
-            return id;
         }
 
         public static void DeletePerson(int id)
@@ -128,6 +128,19 @@ namespace DocumentManagement
                 command.Parameters["@id"].Value = id;
                 command.ExecuteNonQuery();
             }
+        }
+
+        public static int GetMaxId()
+        {
+            int max = 0;
+            string sqlExpression = "SELECT COALESCE(MAX(Id), 0) FROM Person";
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand(sqlExpression, connection);
+                max = (int)command.ExecuteScalar();
+            }
+            return max;
         }
     }
 }

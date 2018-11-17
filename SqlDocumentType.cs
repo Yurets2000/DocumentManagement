@@ -65,19 +65,19 @@ namespace DocumentManagement
             return documentType;
         }
 
-        public static int AddDocumentType(DocumentType documentType)
+        public static void AddDocumentType(DocumentType documentType)
         {
-            int id = -1;
-            string sqlExpression = "INSERT INTO DocumentType(Name) output INSERTED.Id VALUES (@name)";
+            string sqlExpression = "INSERT INTO DocumentType(Id, Name) VALUES (@id, @name)";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
+                command.Parameters.Add("@id", SqlDbType.Int);
                 command.Parameters.Add("@name", SqlDbType.Text);
+                command.Parameters["@id"].Value = documentType.Id;
                 command.Parameters["@name"].Value = documentType.type;
-                id = (int)command.ExecuteScalar();
+                command.ExecuteNonQuery();
             }
-            return id;
         }
 
         public static void UpdateDocumentType(DocumentType documentType)
@@ -106,6 +106,19 @@ namespace DocumentManagement
                 command.Parameters["@id"].Value = id;
                 command.ExecuteNonQuery();
             }
+        }
+
+        public static int GetMaxId()
+        {
+            int max = 0;
+            string sqlExpression = "SELECT COALESCE(MAX(Id), 0) FROM DocumentType";
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand(sqlExpression, connection);
+                max = (int)command.ExecuteScalar();
+            }
+            return max;
         }
     }
 }

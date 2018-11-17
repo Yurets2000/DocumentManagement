@@ -8,24 +8,20 @@ namespace DocumentManagement
 {
     public class MainSecretary : Employee
     {
-        public bool InitMainSecretary { get; set; }
-
         public MainSecretary() : base() { }
 
         public MainSecretary(Person person, Company company, int salary) : base(person, company, salary) { }
 
         public void RedirectPendingDocument(Secretary secretary, Document document)
         {
-            Chancery chancery = Company.CompanyChancery;
+            Chancery chancery = Company.Chancery;
             chancery.PendingDocuments.Remove(document);
-            SqlPendingDocuments.DeletePendingDocument(chancery.Id, document.Id);
-            secretary.PendingDocuments.Add(document);
-            SqlSecretaryPendingDocuments.AddPendingDocument(secretary.EmployeeId, document.Id);         
+            secretary.PendingDocuments.Add(document);    
         }
 
         public void RedirectPendingDocument(Document document)
         {
-            Chancery chancery = Company.CompanyChancery;
+            Chancery chancery = Company.Chancery;
             int maxDocuments = 0;
             foreach (Secretary secretary in chancery.Secretaries)
             {
@@ -39,37 +35,31 @@ namespace DocumentManagement
                 if(secretary.PendingDocuments.Count == maxDocuments)
                 {
                     chancery.PendingDocuments.Remove(document);
-                    SqlPendingDocuments.DeletePendingDocument(chancery.Id, document.Id);
                     secretary.PendingDocuments.Add(document);
-                    SqlSecretaryPendingDocuments.AddPendingDocument(secretary.EmployeeId, document.Id);
                     break;
                 }
             }
         }
 
-        public static MainSecretary GetMainSecretary(int id)
-        {
-            return SqlMainSecretary.GetMainSecretary(id);
-        }
-
         public new void Persist()
         {
-            EmployeeId = SqlMainSecretary.AddMainSecretary(this);
-            SqlPerson.UpdatePerson(this);
+            DataLists dataLists = DataStorage.GetInstance().DataLists;
+            EmployeeId = DataLists.GenerateMainSecretaryId();
+            Person person = dataLists.Persons.Find((p) => p.Id == Id);
+            person = this;
             //Добавляем управляющего в секретариат
-            Company.CompanyChancery.MainSecretary = this;
-        }
-
-        public new void Update()
-        {
-            SqlMainSecretary.UpdateMainSecretary(this);
+            Company.Chancery.MainSecretary = this;
+            dataLists.MainSecretaries.Add(this);
         }
 
         public override void Quit()
         {
+            DataLists dataLists = DataStorage.GetInstance().DataLists;
             Working = false;
-            SqlMainSecretary.DeleteMainSecretary(EmployeeId);
-            SqlPerson.UpdatePerson(this);
+            dataLists.MainSecretaries.Remove(this);
+            Person person = dataLists.Persons.Find((p) => p.Id == Id);
+            person = this;
+            Company.Chancery.MainSecretary = null;
         }
     }
 }

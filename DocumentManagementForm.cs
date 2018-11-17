@@ -15,6 +15,7 @@ namespace DocumentManagement
         public DocumentManagementForm()
         {
             InitializeComponent();
+            DataStorage storage = DataStorage.GetInstance();
             UpdateCompaniesBox();
             UpdatePersonsBox();
             /*
@@ -24,6 +25,14 @@ namespace DocumentManagement
             CompanyType type4 = new CompanyType("Корпорация");
             CompanyType type5 = new CompanyType("Муниципалитет");
             CompanyType type6 = new CompanyType("Ассоциация");
+
+            type1.Id = DataLists.GenerateCompanyTypeId();
+            type2.Id = DataLists.GenerateCompanyTypeId();
+            type3.Id = DataLists.GenerateCompanyTypeId();
+            type4.Id = DataLists.GenerateCompanyTypeId();
+            type5.Id = DataLists.GenerateCompanyTypeId();
+            type6.Id = DataLists.GenerateCompanyTypeId();
+
             SqlCompanyType.AddCompanyType(type1);
             SqlCompanyType.AddCompanyType(type2);
             SqlCompanyType.AddCompanyType(type3);
@@ -31,15 +40,20 @@ namespace DocumentManagement
             SqlCompanyType.AddCompanyType(type5);
             SqlCompanyType.AddCompanyType(type6);
 
-            DocumentType dtype2 = new DocumentType("Справка");
-            DocumentType dtype3 = new DocumentType("Акт");
-            DocumentType dtype4 = new DocumentType("Приказ");
-            DocumentType dtype5 = new DocumentType("Докладная записка");
+            DocumentType dtype1 = new DocumentType("Справка");
+            DocumentType dtype2 = new DocumentType("Акт");
+            DocumentType dtype3 = new DocumentType("Приказ");
+            DocumentType dtype4 = new DocumentType("Докладная записка");
+
+            dtype1.Id = DataLists.GenerateDocumentTypeId();
+            dtype2.Id = DataLists.GenerateDocumentTypeId();
+            dtype3.Id = DataLists.GenerateDocumentTypeId();
+            dtype4.Id = DataLists.GenerateDocumentTypeId();
+
             SqlDocumentType.AddDocumentType(dtype1);
             SqlDocumentType.AddDocumentType(dtype2);
             SqlDocumentType.AddDocumentType(dtype3);
             SqlDocumentType.AddDocumentType(dtype4);
-            SqlDocumentType.AddDocumentType(dtype5);
             */
         }
 
@@ -124,12 +138,14 @@ namespace DocumentManagement
 
         private void DocumentManagementForm_Closing(object sender, FormClosingEventArgs e)
         {
-            DialogResult dlg = MessageBox.Show("Save changes?", "Question", MessageBoxButtons.YesNo);
+            DialogResult dlg = MessageBox.Show("Save changes?", "Document Management System", MessageBoxButtons.YesNo);
 
             if (dlg == DialogResult.Yes)
             {
-                SaveChanges();
-                e.Cancel = false;          
+                DataStorage ds = DataStorage.GetInstance();
+                ds.UpdateCollections();
+                ds.PersistDataChanges();
+                e.Cancel = false;
             }
             if (dlg == DialogResult.No)
             {
@@ -137,23 +153,18 @@ namespace DocumentManagement
             }
         }
 
-        public void SaveChanges()
-        {
-
-        }
-
         public void UpdatePersonsBox()
         {
             personsBox.DataSource = null;
             personsBox.Items.Clear();
-            personsBox.DataSource = SqlPerson.GetAllPersons();
+            personsBox.DataSource = DataStorage.GetInstance().DataLists.Persons;
         }
 
         public void UpdateCompaniesBox()
         {
             companiesBox.DataSource = null;
             companiesBox.Items.Clear();
-            companiesBox.DataSource = SqlCompany.GetAllCompanies();
+            companiesBox.DataSource = DataStorage.GetInstance().DataLists.Companies;
         }
     } 
 }

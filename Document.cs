@@ -8,8 +8,8 @@ namespace DocumentManagement
 {
     public class Document : ICloneable
     {
-        public bool InitDocument { get; set; }
-
+        public InitializationState InitState { get; set; } = InitializationState.NOT_INITIALIZED;
+        public UpdateState UpdateState { get; set; } = UpdateState.UPDATE_NEEDED;
         public int Id { get; set; }
         public DocumentType Type { get; set; }
         public DateTime CreationDate { get; set; }
@@ -18,79 +18,9 @@ namespace DocumentManagement
         public int DocumentCode { get; set; }
         public bool SenderConfirm { get; set; }
         public bool ReceiverConfirm { get; set; }
-        public Secretary _creator { get; set; }
-        public Company _sender, _receiver;
-
-        public Company Sender
-        {
-            get
-            {
-                if (_sender != null && _sender.InitCompany)
-                {
-                    if (_sender.Id <= 0)
-                    {
-                        throw new Exception("Company Id <= 0");
-                    }
-                    else
-                    {
-                        _sender = SqlCompany.GetCompany(_sender.Id);
-                        _sender.InitCompany = false;
-                    }
-                }
-                return _sender;
-            }
-            set
-            {
-                _sender = value;
-            }
-        }
-        public Company Receiver
-        {
-            get
-            {
-                if (_receiver != null && _receiver.InitCompany)
-                {
-                    if (_receiver.Id <= 0)
-                    {
-                        throw new Exception("Company Id <= 0");
-                    }
-                    else
-                    {
-                        _receiver = SqlCompany.GetCompany(_receiver.Id);
-                        _receiver.InitCompany = false;
-                    }
-                }
-                return _receiver;
-            }
-            set
-            {
-                _receiver = value;
-            }
-        }
-        public Secretary Creator
-        {
-            get
-            {
-                if (_creator != null && _creator.InitSecretary)
-                {
-                    if (_creator.EmployeeId <= 0)
-                    {
-                        throw new Exception("Creator Id <= 0");
-                    }
-                    else
-                    {
-                        _creator = SqlSecretary.GetSecretary(_creator.EmployeeId);
-                        _creator.InitSecretary = false;
-                    }
-                }
-                return _creator;
-            }
-            set
-            {
-                _creator = value;
-            }
-        }
-
+        public Company Sender { get; set; }
+        public Company Receiver { get; set; }
+        public Employee Creator { get; set; }
 
         public Document() { }
 
@@ -108,7 +38,7 @@ namespace DocumentManagement
 
         public override bool Equals(object obj)
         {
-            if (obj == null)
+            if (obj == null || obj == DBNull.Value)
             {
                 return false;
             }
@@ -120,26 +50,20 @@ namespace DocumentManagement
             return Id == document.Id;
         }
 
+        
         public void Persist()
         {
-            Id = SqlDocument.AddDocument(this);
-        }
-
-        public static Document GetDocument(int Id)
-        {
-            return SqlDocument.GetDocument(Id);
-        }
-
-        public void Update()
-        {
-            SqlDocument.UpdateDocument(this);
+            DataLists dataLists = DataStorage.GetInstance().DataLists;
+            Id = DataLists.GenerateDocumentId();
+            dataLists.Documents.Add(this);
         }
 
         public void Delete()
         {
-            SqlDocument.DeleteDocument(Id);
+            DataLists dataLists = DataStorage.GetInstance().DataLists;
+            dataLists.Documents.Remove(this);
         }
-
+        
         public object Clone()
         {
             Document clone = new Document(Type, DocumentCode, Title)
@@ -151,9 +75,16 @@ namespace DocumentManagement
                 Sender = this.Sender,
                 SenderConfirm = this.SenderConfirm,
                 ReceiverConfirm = this.ReceiverConfirm,
-                Creator = this.Creator
+                Creator = this.Creator,
+                InitState = this.InitState,
+                UpdateState = this.UpdateState
             };
             return clone;
+        }
+
+        public override int GetHashCode()
+        {
+            return 2108858624 + Id.GetHashCode();
         }
     }
 }

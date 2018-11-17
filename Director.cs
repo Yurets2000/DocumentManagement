@@ -8,7 +8,6 @@ namespace DocumentManagement
 {
     public class Director : Employee
     {
-        public bool InitDirector { get; set; }
         public byte[] Signature { get; set; }
         public List<Document> PendingDocuments { get; set; }
 
@@ -30,7 +29,6 @@ namespace DocumentManagement
                 else
                 {
                     Director receiverDirector = document.Receiver.Director;
-                    SqlDirectorPendingDocuments.AddPendingDocument(receiverDirector.EmployeeId, document.Id);
                     receiverDirector.PendingDocuments.Add(document);
                 }
             }
@@ -42,51 +40,47 @@ namespace DocumentManagement
                 }
             }
             PendingDocuments.Remove(document);
-            SqlDirectorPendingDocuments.DeletePendingDocument(EmployeeId, document.Id);
         }
 
         public void RejectDocument(Document document)
         {
             if (document.Sender.Equals(Company))
             {
-                Chancery chancery = Company.CompanyChancery;
-                SqlPendingDocuments.AddPendingDocument(chancery.Id, document.Id);
+                Chancery chancery = Company.Chancery;
                 chancery.PendingDocuments.Add(document);
             }
             PendingDocuments.Remove(document);
-            SqlDirectorPendingDocuments.DeletePendingDocument(EmployeeId, document.Id);
         }
 
         public void SendCopyToArchive(Document document)
         {
             Document copy = (Document) document.Clone();
-            Chancery chancery = Company.CompanyChancery;
-            SqlArchive.AddArchivedDocument(chancery.Id, copy.Id);
+            Chancery chancery = Company.Chancery;
             chancery.Archive.Add(copy);
         }
 
         public new void Persist()
         {
-            EmployeeId = SqlDirector.AddDirector(this);
-            SqlPerson.UpdatePerson(this);
-        }
-
-        public new void Update()
-        {
-            SqlDirector.UpdateDirector(this);
+            DataLists dataLists = DataStorage.GetInstance().DataLists;
+            EmployeeId = DataLists.GenerateDirectorId();
+            Person person = dataLists.Persons.Find((p) => p.Id == Id);
+            person = this;
+            dataLists.Directors.Add(this);
         }
 
         public override void Quit()
         {
+            DataLists dataLists = DataStorage.GetInstance().DataLists;
             foreach (Document document in PendingDocuments)
             {
-                SqlDirectorPendingDocuments.DeletePendingDocument(EmployeeId, document.Id);
                 document.Delete();
             }
             PendingDocuments = null;
             Working = false;
-            SqlDirector.DeleteDirector(EmployeeId);
-            SqlPerson.UpdatePerson(this);
+            dataLists.Directors.Remove(this);
+            Person person = dataLists.Persons.Find((p) => p.Id == Id);
+            person = this;
+            Company.Director = null;
         }
     }
 }

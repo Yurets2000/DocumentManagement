@@ -23,7 +23,7 @@ namespace DocumentManagement
 
         public override bool Equals(object obj)
         {
-            if (obj == null)
+            if (obj == null || obj == DBNull.Value)
             {
                 return false;
             }
@@ -33,6 +33,24 @@ namespace DocumentManagement
                 return false;
             }
             return Id == companyType.Id;
+        }
+
+        public void Persist()
+        {
+            DataLists dataLists = DataStorage.GetInstance().DataLists;
+            Id = DataLists.GenerateCompanyTypeId();
+            dataLists.CompanyTypes.Add(this);
+        }
+
+        public void Delete()
+        {
+            DataLists dataLists = DataStorage.GetInstance().DataLists;
+            dataLists.CompanyTypes.Remove(this);
+        }
+
+        public override int GetHashCode()
+        {
+            return 2108858624 + Id.GetHashCode();
         }
     }
 }

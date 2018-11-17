@@ -21,6 +21,36 @@ namespace DocumentManagement
             markerColor = color;
         }
 
-        public void Mark(Document document, int offset, int length) { }
+        public void Persist()
+        {
+            DataLists dataLists = DataStorage.GetInstance().DataLists;
+            Id = DataLists.GenerateMarkerId();
+            dataLists.Markers.Add(this);
+        }
+
+        public void Delete()
+        {
+            DataLists dataLists = DataStorage.GetInstance().DataLists;
+            dataLists.Markers.Remove(this);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || obj == DBNull.Value)
+            {
+                return false;
+            }
+            Marker marker = (Marker)obj;
+            if (marker.Id <= 0 || Id <= 0)
+            {
+                return false;
+            }
+            return Id == marker.Id;
+        }
+
+        public override int GetHashCode()
+        {
+            return 2108858624 + Id.GetHashCode();
+        }
     }
 }

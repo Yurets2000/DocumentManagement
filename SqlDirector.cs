@@ -27,17 +27,20 @@ namespace DocumentManagement
                     while (reader.Read())
                     {
                         int id = (int)reader["Id"];
-                        int personId = (int)reader["PersonId"];
-                        int companyId = (int)reader["CompanyId"];
+                        Person person = null;
+                        if(reader["PersonId"] != DBNull.Value)
+                        {
+                            int personId = (int)reader["PersonId"];
+                            person = SqlPerson.GetPerson(personId);
+                        }
+                        Company company = new Company
+                        {
+                                Id = SqlCompany_Director.GetCompanyByDirector(id),
+                                InitState = InitializationState.INITIALIZATION_NEEDED
+                        };
                         byte[] signature = (byte[])reader["DirectorSignature"];
                         int salary = (int)reader["Salary"];
-                        Person person = SqlPerson.GetPerson(personId);
                         List<Document> pendingDocuments = SqlDirectorPendingDocuments.GetPendingDocuments(id);
-                        Company company = new Company()
-                        {
-                            Id = companyId,
-                            InitCompany = true
-                        };
                         Director director = new Director(person, company, signature, salary)
                         {
                             EmployeeId = id,
@@ -65,59 +68,25 @@ namespace DocumentManagement
                 {
                     while (reader.Read())
                     {
-                        int personId = (int)reader["PersonId"];
-                        int companyId = (int)reader["CompanyId"];
+                        Person person = null;
                         byte[] signature = (byte[])reader["DirectorSignature"];
                         int salary = (int)reader["Salary"];
-                        Person person = SqlPerson.GetPerson(personId);
-                        List<Document> pendingDocuments = SqlDirectorPendingDocuments.GetPendingDocuments(id);
-                        Company company = new Company()
+                        if (reader["PersonId"] != DBNull.Value)
                         {
-                            Id = companyId,
-                            InitCompany = true
+                            int personId = (int)reader["PersonId"];
+                            person = SqlPerson.GetPerson(personId);
+                        }
+                        Company company = new Company
+                        {
+                            Id = SqlCompany_Director.GetCompanyByDirector(id),
+                            InitState = InitializationState.INITIALIZATION_NEEDED
                         };
+                        List<Document> pendingDocuments = SqlDirectorPendingDocuments.GetPendingDocuments(id);
                         director = new Director(person, company, signature, salary)
                         {
                             EmployeeId = id,
                             PendingDocuments = pendingDocuments
                         };
-                    }
-                }
-            }
-            return director;
-        }
-
-        public static Director GetCompanyDirector(int companyId)
-        {
-            Director director = null;
-            string sqlExpression = "SELECT * FROM Director WHERE CompanyId = @companyId AND Deleted = 0";
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                SqlCommand command = new SqlCommand(sqlExpression, connection);
-                command.Parameters.Add("@companyId", SqlDbType.Int);
-                command.Parameters["@companyId"].Value = companyId;
-                SqlDataReader reader = command.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        int id = (int)reader["Id"];
-                        int personId = (int)reader["PersonId"];
-                        byte[] signature = (byte[])reader["DirectorSignature"];
-                        int salary = (int)reader["Salary"];
-                        Person person = SqlPerson.GetPerson(personId);
-                        List<Document> pendingDocuments = SqlDirectorPendingDocuments.GetPendingDocuments(id);
-                        Company company = new Company()
-                        {
-                            Id = companyId,
-                            InitCompany = true
-                        };
-                        director = new Director(person, company, signature, salary)
-                        {
-                            EmployeeId = id,
-                            PendingDocuments = pendingDocuments
-                    };
                     }
                 }
             }
@@ -140,20 +109,10 @@ namespace DocumentManagement
                     while (reader.Read())
                     {
                         int id = (int)reader["Id"];
-                        int companyId = (int)reader["CompanyId"];
-                        byte[] signature = (byte[])reader["DirectorSignature"];
-                        int salary = (int)reader["Salary"];
-                        Person person = SqlPerson.GetPerson(personId);
-                        List<Document> pendingDocuments = SqlDirectorPendingDocuments.GetPendingDocuments(id);
-                        Company company = new Company()
-                        {
-                            Id = companyId,
-                            InitCompany = true
-                        };
-                        director = new Director(person, company, signature, salary)
+                        director = new Director
                         {
                             EmployeeId = id,
-                            PendingDocuments = pendingDocuments
+                            InitState = InitializationState.INITIALIZATION_NEEDED
                         };
                     }
                 }
@@ -161,55 +120,39 @@ namespace DocumentManagement
             return director;
         }
 
-        public static int AddDirector(Director director)
+        public static void AddDirector(Director director)
         {
-            int id = -1;
-            string sqlExpression = "INSERT INTO Director(PersonId, CompanyId, DirectorSignature, Salary) output INSERTED.Id VALUES(@personId, @companyId, @signature, @salary)";
+            string sqlExpression = "INSERT INTO Director(Id, PersonId, DirectorSignature, Salary) VALUES(@id, @personId, @signature, @salary)";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
+                command.Parameters.Add("@id", SqlDbType.Int);
                 command.Parameters.Add("@personId", SqlDbType.Int);
-                command.Parameters.Add("@companyId", SqlDbType.Int);
                 command.Parameters.Add("@signature", SqlDbType.VarBinary);
                 command.Parameters.Add("@salary", SqlDbType.Int);
+
+                command.Parameters["@id"].Value = director.EmployeeId;
                 command.Parameters["@personId"].Value = director.Id;
-                if (director.Company == null)
-                {
-                    command.Parameters["@companyId"].Value = DBNull.Value;
-                }
-                else
-                {
-                    command.Parameters["@companyId"].Value = director.Company.Id;
-                }
                 command.Parameters["@signature"].Value = director.Signature;
                 command.Parameters["@salary"].Value = director.Salary;
-                id = (int)command.ExecuteScalar();
+                command.ExecuteNonQuery();
             }
-            return id;
         }
 
         public static void UpdateDirector(Director director)
         {
-            string sqlExpression = "UPDATE Director SET PersonId = @personId, CompanyId = @companyId, DirectorSignature = @signature, Salary = @salary WHERE Id = @id";
+            string sqlExpression = "UPDATE Director SET PersonId = @personId, DirectorSignature = @signature, Salary = @salary WHERE Id = @id";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
                 command.Parameters.Add("@personId", SqlDbType.Int);
-                command.Parameters.Add("@companyId", SqlDbType.Int);
                 command.Parameters.Add("@signature", SqlDbType.VarBinary);
                 command.Parameters.Add("@salary", SqlDbType.Int);
                 command.Parameters.Add("@id", SqlDbType.Int);
+
                 command.Parameters["@personId"].Value = director.Id;
-                if (director.Company == null)
-                {
-                    command.Parameters["@companyId"].Value = DBNull.Value;
-                }
-                else
-                {
-                    command.Parameters["@companyId"].Value = director.Company.Id;
-                }
                 command.Parameters["@signature"].Value = director.Signature;
                 command.Parameters["@salary"].Value = director.Salary;
                 command.Parameters["@id"].Value = director.EmployeeId;
@@ -226,8 +169,22 @@ namespace DocumentManagement
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
                 command.Parameters.Add("@id", SqlDbType.Int);
                 command.Parameters["@id"].Value = id;
+                SqlCompany_Director.DeleteFromDirector(id);
                 command.ExecuteNonQuery();
             }
+        }
+
+        public static int GetMaxId()
+        {
+            int max = 0;
+            string sqlExpression = "SELECT COALESCE(MAX(Id), 0) FROM Director";
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand(sqlExpression, connection);
+                max = (int)command.ExecuteScalar();
+            }
+            return max;
         }
     }
 }

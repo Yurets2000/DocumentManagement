@@ -59,13 +59,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="CompanyType.cs" />
-    <Compile Include="CrudChancery.cs" />
-    <Compile Include="CrudCompany.cs" />
-    <Compile Include="CrudDirector.cs" />
-    <Compile Include="CrudDocument.cs" />
-    <Compile Include="CrudMainSecretary.cs" />
-    <Compile Include="CrudPerson.cs" />
-    <Compile Include="CrudSecretary.cs" />
+    <Compile Include="DataLists.cs" />
     <Compile Include="Director.cs" />
     <Compile Include="DirectorForm.cs">
       <SubType>Form</SubType>
@@ -94,6 +88,8 @@
     </Compile>
     <Compile Include="DocumentType.cs" />
     <Compile Include="Employee.cs" />
+    <Compile Include="DataStorage.cs" />
+    <Compile Include="InitializationState.cs" />
     <Compile Include="MainSecretaryInfoForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -130,6 +126,8 @@
     <Compile Include="SqlChancery.cs" />
     <Compile Include="SqlCompany.cs" />
     <Compile Include="SqlCompanyType.cs" />
+    <Compile Include="SqlCompany_Chancery.cs" />
+    <Compile Include="SqlCompany_Director.cs" />
     <Compile Include="SqlDirector.cs" />
     <Compile Include="SqlDirectorPendingDocuments.cs" />
     <Compile Include="SqlDocument.cs" />
@@ -141,6 +139,7 @@
     <Compile Include="SqlSecretaryCreatedDocuments.cs" />
     <Compile Include="SqlSecretary.cs" />
     <Compile Include="SqlSecretaryPendingDocuments.cs" />
+    <Compile Include="UpdateState.cs" />
     <Compile Include="Utils.cs" />
     <EmbeddedResource Include="DocumentManagementForm.resx">
       <DependentUpon>DocumentManagementForm.cs</DependentUpon>

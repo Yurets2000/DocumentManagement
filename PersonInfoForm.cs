@@ -167,7 +167,6 @@ namespace DocumentManagement
                     person.Name = name;
                     person.Surname = surname;
                     person.Age = int.Parse(ageString);
-                    person.Update();
 
                     DocumentManagementForm form = (DocumentManagementForm)Application.OpenForms["DocumentManagementForm"];
                     form.UpdatePersonsBox();

@@ -15,6 +15,32 @@ namespace DocumentManagement
     {
         private static string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
+        public static List<Marker> GetAllMarkers()
+        {
+            List<Marker> markers = new List<Marker>();
+            string sqlExpression = "SELECT * FROM Marker WHERE Deleted = 0";
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand(sqlExpression, connection);
+                SqlDataReader reader = command.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        int Id = (int)reader["Id"];
+                        int ColorCode = (int)reader["ColorCode"];
+                        Marker marker = new Marker((Marker.Color)ColorCode)
+                        {
+                            Id = Id
+                        };
+                        markers.Add(marker);
+                    }
+                }
+            }
+            return markers;
+        }
+
         public static Marker GetMarker(int id)
         {
             Marker marker = null;
@@ -41,19 +67,19 @@ namespace DocumentManagement
             return marker;
         }
 
-        public static int AddMarker(Marker marker)
+        public static void AddMarker(Marker marker)
         {
-            int id = -1;
-            string sqlExpression = "INSERT INTO Marker(ColorCode) output INSERTED.Id VALUES (@colorCode)";
+            string sqlExpression = "INSERT INTO Marker(Id, ColorCode) VALUES (@id, @colorCode)";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
+                command.Parameters.Add("@id", SqlDbType.Int);
                 command.Parameters.Add("@colorCode", SqlDbType.Int);
+                command.Parameters["@id"].Value = marker.Id;
                 command.Parameters["@colorCode"].Value = (int)marker.markerColor;
-                id = (int)command.ExecuteScalar();
+                command.ExecuteNonQuery();
             }
-            return id;
         }
 
         public static void DeleteMarker(int id)
@@ -67,6 +93,19 @@ namespace DocumentManagement
                 command.Parameters["@id"].Value = id;
                 command.ExecuteNonQuery();
             }
+        }
+
+        public static int GetMaxId()
+        {
+            int max = 0;
+            string sqlExpression = "SELECT COALESCE(MAX(Id), 0) FROM Marker";
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand(sqlExpression, connection);
+                max = (int)command.ExecuteScalar();
+            }
+            return max;
         }
     }
 }

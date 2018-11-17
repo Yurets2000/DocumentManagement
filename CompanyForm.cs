@@ -62,7 +62,7 @@ namespace DocumentManagement
             {
                 Name = "typeBox",
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                DataSource = SqlCompanyType.GetAllCompanyTypes()
+                DataSource = DataStorage.GetInstance().DataLists.CompanyTypes
             };
             typeBox.SetBounds(95, 90, 150, 30);
 
@@ -80,7 +80,7 @@ namespace DocumentManagement
             {
                 Name = "personsBox",
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                DataSource = SqlPerson.GetAllPersons().Where(p => !p.Working).ToList()
+                DataSource = DataStorage.GetInstance().DataLists.Persons.Where(p => !p.Working).ToList()
             };
             personsBox.SetBounds(10, 160, 235, 30);
 
@@ -148,7 +148,12 @@ namespace DocumentManagement
                 bool addressValidated = CompanyFormValidator.ValidateAddress(address);
                 if (nameValidated && addressValidated)
                 {
-                    Chancery chancery = new Chancery();
+                    Chancery chancery = new Chancery
+                    {
+                        Archive = new List<Document>(),
+                        PendingDocuments = new List<Document>(),
+                        Secretaries = new List<Secretary>()
+                    };
                     Company company = new Company(director, type, chancery, name, address);
                     company.Persist();
                     DocumentManagementForm form = (DocumentManagementForm)Application.OpenForms["DocumentManagementForm"];

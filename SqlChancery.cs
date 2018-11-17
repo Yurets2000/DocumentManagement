@@ -27,17 +27,24 @@ namespace DocumentManagement
                     while (reader.Read())
                     {
                         int id = (int)reader["Id"];
-                        int companyId = (int)reader["CompanyId"];
-                        Company chanceryCompany = new Company()
+                        Company company = new Company
                         {
-                            Id = companyId,
-                            InitCompany = true
+                            Id = SqlCompany_Chancery.GetCompanyByChancery(id),
+                            InitState = InitializationState.INITIALIZATION_NEEDED
                         };
                         List<Document> archive = SqlArchive.GetArchivedDocuments(id);
                         List<Document> pendingDocuments = SqlPendingDocuments.GetPendingDocuments(id);
-                        List<Secretary> secretaries = SqlSecretary.GetCompanySecretaries(companyId);
-                        MainSecretary mainSecretary = SqlMainSecretary.GetCompanyMainSecretary(companyId);
-                        Chancery chancery = new Chancery(chanceryCompany)
+                        List<Secretary> secretaries = SqlSecretary.GetCompanySecretaries(company.Id);
+                        MainSecretary mainSecretary = null;
+                        if (SqlMainSecretary.GetCompanyMainSecretary(company.Id) != null)
+                        {
+                            mainSecretary = new MainSecretary
+                            {
+                                EmployeeId = SqlMainSecretary.GetCompanyMainSecretary(company.Id).EmployeeId,
+                                InitState = InitializationState.INITIALIZATION_NEEDED
+                            };
+                        }
+                        Chancery chancery = new Chancery(company)
                         {
                             Id = id,
                             Archive = archive,
@@ -67,17 +74,16 @@ namespace DocumentManagement
                 {
                     while (reader.Read())
                     {
-                        int companyId = (int)reader["CompanyId"];
-                        Company chanceryCompany = new Company()
+                        Company company = new Company
                         {
-                            Id = companyId,
-                            InitCompany = true
+                            Id = SqlCompany_Chancery.GetCompanyByChancery(id),
+                            InitState = InitializationState.INITIALIZATION_NEEDED
                         };
                         List<Document> archive = SqlArchive.GetArchivedDocuments(id);
                         List<Document> pendingDocuments = SqlPendingDocuments.GetPendingDocuments(id);
-                        List<Secretary> secretaries = SqlSecretary.GetCompanySecretaries(companyId);
-                        MainSecretary mainSecretary = SqlMainSecretary.GetCompanyMainSecretary(companyId);
-                        chancery = new Chancery(chanceryCompany)
+                        List<Secretary> secretaries = SqlSecretary.GetCompanySecretaries(company.Id);
+                        MainSecretary mainSecretary = SqlMainSecretary.GetCompanyMainSecretary(company.Id);
+                        chancery = new Chancery(company)
                         {
                             Id = id,
                             Archive = archive,
@@ -91,45 +97,14 @@ namespace DocumentManagement
             return chancery;
         }
 
-        public static int AddChancery(Chancery chancery)
+        public static void AddChancery(Chancery chancery)
         {
-            int id = -1;
-            string sqlExpression = "INSERT INTO Chancery(CompanyId) output INSERTED.Id VALUES (@companyId)";
+            string sqlExpression = "INSERT INTO Chancery(Id) VALUES (@id)";
             using(SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
-                command.Parameters.Add("@companyId", SqlDbType.Int);
-                if(chancery.ChanceryCompany == null)
-                {
-                    command.Parameters["@companyId"].Value = DBNull.Value;
-                }
-                else
-                {
-                    command.Parameters["@companyId"].Value = chancery.ChanceryCompany.Id;
-                }
-                id = (int) command.ExecuteScalar();
-            }
-            return id;
-        }
-
-        public static void UpdateChancery(Chancery chancery)
-        {       
-            string sqlExpression = "UPDATE Chancery SET CompanyId = @companyId WHERE Id = @id";
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                SqlCommand command = new SqlCommand(sqlExpression, connection);
-                command.Parameters.Add("@companyId", SqlDbType.Int);
                 command.Parameters.Add("@id", SqlDbType.Int);
-                if (chancery.ChanceryCompany == null)
-                {
-                    command.Parameters["@companyId"].Value = DBNull.Value;
-                }
-                else
-                {
-                    command.Parameters["@companyId"].Value = chancery.ChanceryCompany.Id;
-                }
                 command.Parameters["@id"].Value = chancery.Id;
                 command.ExecuteNonQuery();
             }
@@ -146,6 +121,19 @@ namespace DocumentManagement
                 command.Parameters["@id"].Value = id;
                 command.ExecuteNonQuery();
             }
+        }
+
+        public static int GetMaxId()
+        {
+            int max = 0;
+            string sqlExpression = "SELECT COALESCE(MAX(Id), 0) FROM Chancery";
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand(sqlExpression, connection);
+                max = (int)command.ExecuteScalar();
+            }
+            return max;
         }
     }
 }

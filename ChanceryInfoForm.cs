@@ -91,7 +91,7 @@ namespace DocumentManagement
             {
                 Name = "personsToSecretaryBox",
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                DataSource = SqlPerson.GetAllPersons().Where(p => !p.Working).ToList()
+                DataSource = DataStorage.GetInstance().DataLists.Persons.Where(p => !p.Working).ToList()
             };
             personsToSecretaryBox.SetBounds(10, 250, 150, 30);
 
@@ -190,7 +190,7 @@ namespace DocumentManagement
             {
                 Name = "personsToMainSecretaryBox",
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                DataSource = SqlPerson.GetAllPersons().Where(p => !p.Working).ToList()
+                DataSource = DataStorage.GetInstance().DataLists.Persons.Where(p => !p.Working).ToList()
             };
             personsToMainSecretaryBox.SetBounds(250, 90, 250, 30);
             Controls.Add(addMainSecretaryButton);
@@ -254,7 +254,7 @@ namespace DocumentManagement
             {
                 Name = "personsToMainSecretaryBox",
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                DataSource = SqlPerson.GetAllPersons().Where(p => !p.Working).ToList()
+                DataSource = DataStorage.GetInstance().DataLists.Persons.Where(p => !p.Working).ToList()
             };
             personsToMainSecretaryBox.SetBounds(250, 180, 250, 30);
 
@@ -330,8 +330,6 @@ namespace DocumentManagement
                 //Добавляем нового управляющего
                 mainSecretary.Persist();
                 chancery.MainSecretary = mainSecretary;
-                //Обновляем секретариат
-                chancery.Update();
 
                 Controls.Remove(changeMainSecretaryButton);
                 Controls.Remove(personsToMainSecretaryBox);
@@ -432,7 +430,7 @@ namespace DocumentManagement
             {
                 Person person = form.Person;             
                 Marker marker = new Marker(Marker.Color.BLUE);
-                Secretary secretary = new Secretary(person, chancery.ChanceryCompany, form.Salary)
+                Secretary secretary = new Secretary(person, chancery.Company, form.Salary)
                 {
                     Marker = marker,
                     PendingDocuments = new List<Document>(),
@@ -444,6 +442,7 @@ namespace DocumentManagement
 
                 UpdateSecretariesBox();
                 UpdatePersonsToSecretaryBox();
+                UpdatePersonsToMainSecretaryBox();
             }
         }
 
@@ -456,12 +455,10 @@ namespace DocumentManagement
             if (form.CorrectOnClose)
             {
                 Person person = form.Person;
-                MainSecretary mainSecretary = new MainSecretary(person, chancery.ChanceryCompany, form.Salary);
+                MainSecretary mainSecretary = new MainSecretary(person, chancery.Company, form.Salary);
                 mainSecretary.Persist();
                 //Добавляем управляющего в секретариат
                 chancery.MainSecretary = mainSecretary;
-                //Обновляем секретариат
-                chancery.Update();
 
                 Controls.Remove(addMainSecretaryButton);
                 Controls.Remove(personsToMainSecretaryBox);
@@ -478,7 +475,7 @@ namespace DocumentManagement
             if (form.CorrectOnClose)
             {
                 Person person = form.Person;
-                mainSecretary = new MainSecretary(person, chancery.ChanceryCompany, form.Salary);
+                mainSecretary = new MainSecretary(person, chancery.Company, form.Salary);
                 mainSecretaryChanged = true;
             }
         }
@@ -496,7 +493,7 @@ namespace DocumentManagement
             ComboBox personsToMainSecretaryBox = (ComboBox)Utils.FindControl(this, "personsToMainSecretaryBox");
             personsToMainSecretaryBox.DataSource = null;
             personsToMainSecretaryBox.Items.Clear();
-            personsToMainSecretaryBox.DataSource = SqlPerson.GetAllPersons().Where(p => !p.Working).ToList();
+            personsToMainSecretaryBox.DataSource = DataStorage.GetInstance().DataLists.Persons.Where(p => !p.Working).ToList();
         }
 
         public void UpdatePersonsToSecretaryBox()
@@ -504,7 +501,7 @@ namespace DocumentManagement
             ComboBox personsToSecretaryBox = (ComboBox)Utils.FindControl(this, "personsToSecretaryBox");
             personsToSecretaryBox.DataSource = null;
             personsToSecretaryBox.Items.Clear();
-            personsToSecretaryBox.DataSource = SqlPerson.GetAllPersons().Where(p => !p.Working).ToList();
+            personsToSecretaryBox.DataSource = DataStorage.GetInstance().DataLists.Persons.Where(p => !p.Working).ToList();
         }
 
         public void UpdateArchiveBox()

@@ -52,7 +52,7 @@ namespace DocumentManagement
             {
                 Name = "typeBox",
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                DataSource = SqlDocumentType.GetAllDocumentTypes()
+                DataSource = DataStorage.GetInstance().DataLists.DocumentTypes
             };
             typeBox.SetBounds(95, 55, 150, 30);
 
@@ -92,7 +92,7 @@ namespace DocumentManagement
             {
                 Name = "receiverBox",
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                DataSource = SqlCompany.GetAllCompanies()
+                DataSource = DataStorage.GetInstance().DataLists.Companies
             };
             receiverBox.SetBounds(95, 160, 150, 30);
 
@@ -181,7 +181,6 @@ namespace DocumentManagement
                     document.Title = title;
                     document.Text = text;
                     document.Receiver = receiver;
-                    secretary.EditDocument(document);
                     Dispose();
                     Close();
                 }

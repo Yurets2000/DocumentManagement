@@ -8,11 +8,12 @@ namespace DocumentManagement
 {
     public class Person
     {
+        public UpdateState UpdateState { get; set; } = UpdateState.UPDATE_NEEDED;
         public string Name { get; set; }
         public string Surname { get; set; }
         public bool Working { get; set; }
         public int Age { get; set; }
-        public int Id { get; set; }       
+        public int Id { get; set; }
 
         public Person() { }
 
@@ -30,7 +31,7 @@ namespace DocumentManagement
 
         public override bool Equals(object obj)
         {
-            if (obj == null)
+            if (obj == null || obj == DBNull.Value)
             {
                 return false;
             }
@@ -44,37 +45,38 @@ namespace DocumentManagement
 
         public void Persist()
         {
-            Id = SqlPerson.AddPerson(this);
-        }
-
-        public static Person GetPerson(int Id)
-        {
-            return SqlPerson.GetPerson(Id);
-        }
-
-        public void Update()
-        {
-            SqlPerson.UpdatePerson(this);
+            DataLists dataLists = DataStorage.GetInstance().DataLists;
+            Id = DataLists.GeneratePersonId();
+            dataLists.Persons.Add(this);
         }
 
         public void Delete()
         {
-            Secretary secretary = SqlSecretary.GetSecretaryByPerson(Id);
-            MainSecretary mainSecretary = SqlMainSecretary.GetMainSecretaryByPerson(Id);
-            Director director = SqlDirector.GetDirectorByPerson(Id);
+            DataLists dataLists = DataStorage.GetInstance().DataLists;
+            Secretary secretary = dataLists.Secretaries.Find((s) => s.Id == Id);
+            MainSecretary mainSecretary = dataLists.MainSecretaries.Find((ms) => ms.Id == Id);
+            Director director = dataLists.Directors.Find((d) => d.Id == Id);
             if (secretary != null)
             {
-                secretary.Delete();
+                secretary.Quit();
+                secretary = null;
             }
             if (mainSecretary != null)
             {
-                mainSecretary.Delete();
+                mainSecretary.Quit();
+                mainSecretary = null;
             }
             if (director != null)
             {
+                // С компанией удаляется и директор
                 director.Company.Delete();
             }
-            SqlPerson.DeletePerson(Id);
+            dataLists.Persons.Remove(this);
+        }
+
+        public override int GetHashCode()
+        {
+            return 2108858624 + Id.GetHashCode();
         }
     }
 }

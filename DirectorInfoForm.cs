@@ -286,7 +286,6 @@ namespace DocumentManagement
                 if (salaryValidated)
                 {
                     director.Salary = int.Parse(salaryBox.Text);
-                    director.Update();
 
                     Controls.Remove(salaryBox);
                     Controls.Remove((Control)sender);

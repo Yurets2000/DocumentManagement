@@ -30,7 +30,11 @@ namespace DocumentManagement
                     while (reader.Read())
                     {
                         int documentId = (int)reader["DocumentId"];
-                        Document document = SqlDocument.GetDocument(documentId);
+                        Document document = new Document
+                        {
+                            Id = documentId,
+                            InitState = InitializationState.INITIALIZATION_NEEDED
+                        };
                         documents.Add(document);
                     }
                 }
