@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static DocumentManagement.Base;
 
 namespace DocumentManagement
 {
+    [Serializable]
     public abstract class Employee : Person
     {
         public InitializationState InitState { get; set; } = InitializationState.NOT_INITIALIZED;

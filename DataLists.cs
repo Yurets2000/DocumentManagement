@@ -3,16 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static DocumentManagement.Base;
 
 namespace DocumentManagement
 {
     public class DataLists
     {
-        private enum PersistedClass
-        {
-            Person, Company, Chancery, Director, Secretary, MainSecretary, Document, CompanyType, DocumentType, Marker
-        }
-
         private static Dictionary<PersistedClass, int> _lastIdDictionary = new Dictionary<PersistedClass, int>();
 
         public List<Person> Persons { get; private set; }

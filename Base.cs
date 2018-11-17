@@ -6,7 +6,16 @@ using System.Threading.Tasks;
 
 namespace DocumentManagement
 {
-    class Base
+    public class Base
     {
+        public enum PersistedClass
+        {
+            Person, Company, Chancery, Director, Secretary, MainSecretary, Document, CompanyType, DocumentType, Marker
+        }
+
+        public enum InitializationState
+        {
+            NOT_INITIALIZED, INITIALIZATION_NEEDED, IN_INITIALIZATION, INITIALIZED
+        }
     }
 }

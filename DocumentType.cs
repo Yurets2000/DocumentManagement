@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace DocumentManagement
 {
+    [Serializable]
     public class DocumentType
     {
         public int Id { get; set; }

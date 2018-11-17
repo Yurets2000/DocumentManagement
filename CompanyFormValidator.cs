@@ -9,7 +9,6 @@ namespace DocumentManagement
 {
     public class CompanyFormValidator
     {
-
         public static bool ValidateName(string name)
         {
             string pattern = @"^([A-Za-z]+[\s(\.\s)]?)+$";

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -142,9 +143,24 @@ namespace DocumentManagement
 
             if (dlg == DialogResult.Yes)
             {
-                DataStorage ds = DataStorage.GetInstance();
-                ds.UpdateCollections();
-                ds.PersistDataChanges();
+                string type = ConfigurationManager.AppSettings["PersistingType"];
+                switch (type)
+                {
+                    case "1":
+                        DataStorage ds = DataStorage.GetInstance();
+                        ds.UpdateCollections();
+                        ds.PersistDataChanges();
+                    break;
+
+                    case "2":
+
+                    break;
+
+                    case "3":
+                        SerializationDataStorage sds = SerializationDataStorage.GetInstance();
+                        sds.PersistData();
+                    break;
+                }
                 e.Cancel = false;
             }
             if (dlg == DialogResult.No)

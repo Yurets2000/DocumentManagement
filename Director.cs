@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace DocumentManagement
 {
+    [Serializable]
     public class Director : Employee
     {
         public byte[] Signature { get; set; }

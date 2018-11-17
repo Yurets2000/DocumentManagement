@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace DocumentManagement
 {
+    [Serializable]
     public class DocumentInfo
     {
         public DateTime Time { get; set; }

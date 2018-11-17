@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Base.cs" />
     <Compile Include="Chancery.cs" />
     <Compile Include="ChanceryInfoForm.cs">
       <SubType>Form</SubType>
@@ -89,7 +90,6 @@
     <Compile Include="DocumentType.cs" />
     <Compile Include="Employee.cs" />
     <Compile Include="DataStorage.cs" />
-    <Compile Include="InitializationState.cs" />
     <Compile Include="MainSecretaryInfoForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -119,6 +119,8 @@
     <Compile Include="SecretaryInfoForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="SerializationDataLists.cs" />
+    <Compile Include="SerializationDataStorage.cs" />
     <Compile Include="SignatureBox.cs">
       <SubType>Component</SubType>
     </Compile>

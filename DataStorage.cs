@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static DocumentManagement.Base;
 
 namespace DocumentManagement
 {
@@ -22,14 +23,6 @@ namespace DocumentManagement
             DataLists.Initialize();
             InitializeData(_oldDataLists);
             InitializeData(DataLists);
-            foreach (Secretary s in DataLists.Secretaries)
-            {
-                s.state = 2;
-            }
-            foreach (Secretary s in _oldDataLists.Secretaries)
-            {
-                s.state = 3;
-            }
         }
 
         public static DataStorage GetInstance()
@@ -330,7 +323,7 @@ namespace DocumentManagement
             }
         }
 
-        public void PersistCompanyChanges(Company company)
+        private void PersistCompanyChanges(Company company)
         {
             SqlCompany.UpdateCompany(company);
             if(company.Director != null && company.Director.UpdateState == UpdateState.UPDATE_NEEDED)
@@ -347,7 +340,7 @@ namespace DocumentManagement
             }
         }
 
-        public void PersistChanceryChanges(Chancery chancery)
+        private void PersistChanceryChanges(Chancery chancery)
         {
             if (chancery.Archive != null)
             {
@@ -393,7 +386,7 @@ namespace DocumentManagement
             }
         }
 
-        public void PersistDirectorChanges(Director director)
+        private void PersistDirectorChanges(Director director)
         {
             SqlDirector.UpdateDirector(director);
             if(director.Company != null && director.Company.UpdateState == UpdateState.UPDATE_NEEDED)
@@ -404,7 +397,7 @@ namespace DocumentManagement
             }
         }
 
-        public void PersistMainSecretaryChanges(MainSecretary mainSecretary)
+        private void PersistMainSecretaryChanges(MainSecretary mainSecretary)
         {
             SqlMainSecretary.UpdateMainSecretary(mainSecretary);
             if (mainSecretary.Company != null && mainSecretary.Company.UpdateState == UpdateState.UPDATE_NEEDED)
@@ -415,7 +408,7 @@ namespace DocumentManagement
             }
         }
 
-        public void PersistSecretaryChanges(Secretary secretary)
+        private void PersistSecretaryChanges(Secretary secretary)
         {
             SqlSecretary.UpdateSecretary(secretary);
             if (secretary.Company != null && secretary.Company.UpdateState == UpdateState.UPDATE_NEEDED)
@@ -468,7 +461,7 @@ namespace DocumentManagement
             */
         }
 
-        public void PersistPersonChanges(Person person)
+        private void PersistPersonChanges(Person person)
         {
             SqlPerson.UpdatePerson(person);
         }

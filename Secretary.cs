@@ -11,16 +11,10 @@ namespace DocumentManagement
         public List<Document> PendingDocuments { get; set; }
         public List<Document> CreatedDocuments { get; set; }
         public Marker Marker { get; set; }
-        public int state = 0;
-        public static int counter = 0;
 
-        public Secretary() : base() {
-            counter++;
-        }
+        public Secretary() : base() { }
 
-        public Secretary(Person person, Company company, int salary) : base(person, company, salary) {
-            counter++;
-        }
+        public Secretary(Person person, Company company, int salary) : base(person, company, salary) { }
 
         public Document CreateDocument(DocumentType type, int documentCode, string title, string content, Company receiver)
         {
@@ -32,7 +26,6 @@ namespace DocumentManagement
             };
             document.Persist();
             CreatedDocuments.Add(document);
-            state = 1;
             return document;
         }
 
