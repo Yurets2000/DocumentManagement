@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace DocumentManagement
 {
-    public enum InitializationState
+    class Base
     {
-        NOT_INITIALIZED, INITIALIZATION_NEEDED, IN_INITIALIZATION, INITIALIZED
     }
 }
